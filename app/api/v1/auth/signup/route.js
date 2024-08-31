@@ -8,7 +8,6 @@ import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
 import databaseService from '@/service/database.service.js';
 import EmailService from '@/service/email.service.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
