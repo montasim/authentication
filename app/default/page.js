@@ -1,5 +1,54 @@
 import React from 'react';
 
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { GoPencil } from 'react-icons/go';
+import defaultConstants from '@/constants/default.constants';
+
 export default function Dashboard() {
-    return <div>default</div>;
+    return (
+        <div>
+            <Table>
+                <TableCaption>A list of your default values.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="w-[100px]">Type</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Sub caregory</TableHead>
+                        <TableHead>value</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow>
+                        <TableCell className="font-medium">Images</TableCell>
+                        <TableCell>Users</TableCell>
+                        <TableCell>Male</TableCell>
+                        <TableCell>
+                            {defaultConstants.images.user.male}
+                        </TableCell>
+                        <TableCell className="text-right">
+                            <GoPencil className="cursor-pointer" />
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell className="font-medium">Images</TableCell>
+                        <TableCell>Users</TableCell>
+                        <TableCell>Female</TableCell>
+                        <TableCell>
+                            {defaultConstants.images.user.female}
+                        </TableCell>
+                        <TableCell className="text-right"></TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </div>
+    );
 }
