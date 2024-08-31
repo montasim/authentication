@@ -6,7 +6,6 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
 import EmailService from '@/service/email.service.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
@@ -54,16 +53,9 @@ export const PUT = async (request) => {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -82,16 +74,9 @@ export const PUT = async (request) => {
         if (!user) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.NOT_FOUND,
-                    message:
-                        'No account found with that email address, or the email address has not been verified. Please check your email address or register for a new account.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.NOT_FOUND,
+                'No account found with that email address, or the email address has not been verified. Please check your email address or register for a new account.'
             );
         }
 
@@ -99,15 +84,9 @@ export const PUT = async (request) => {
         if (!primaryEmail) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: 'No primary email found. Please contact support.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'No primary email found. Please contact support.'
             );
         }
 
@@ -158,15 +137,9 @@ export const PUT = async (request) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.OK,
-                message: 'Password reset email sent successfully.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            true,
+            httpStatus.OK,
+            'Password reset email sent successfully.'
         );
     } catch (error) {
         console.debug('Connecting to database service');
