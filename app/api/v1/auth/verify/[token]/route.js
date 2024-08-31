@@ -5,7 +5,6 @@ import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration';
-import environment from '@/constants/environment.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
@@ -13,6 +12,7 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the user email verification process by validating the provided verification token, updating the user's email verification status, and sending a welcome email.
@@ -184,7 +184,7 @@ export async function POST(request, context) {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

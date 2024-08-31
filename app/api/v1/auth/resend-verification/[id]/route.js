@@ -5,7 +5,6 @@ import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
-import environment from '@/constants/environment.constants.js';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -13,6 +12,7 @@ import generateVerificationToken from '@/utilities/generateVerificationToken.js'
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import incrementUse from '@/utilities/incrementUse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the process of resending an email verification link to the user.
@@ -139,7 +139,7 @@ export const POST = async (request, context) => {
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
         const emailVerificationLink =
-            configuration.env === environment.PRODUCTION
+            configuration.env === getEnvironmentByName('PRODUCTION')
                 ? `https://${hostname}/api/v1/auth/verify-email/${plainToken}`
                 : `http://${hostname}:3000/api/v1/auth/verify-email/${plainToken}`;
         console.debug(
@@ -180,7 +180,7 @@ export const POST = async (request, context) => {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

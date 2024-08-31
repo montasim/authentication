@@ -4,7 +4,6 @@ import usersSchema from '@/app/api/v1/(users)/users.model.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
-import environment from '@/constants/environment.constants.js';
 import EmailService from '@/service/email.service.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
@@ -109,7 +108,7 @@ export const PUT = async (request) => {
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
         const emailVerificationLink =
-            configuration.env === environment.PRODUCTION
+            configuration.env === getEnvironmentByName('PRODUCTION')
                 ? `https://${hostname}/api/v1/auth/reset-password/${plainToken}`
                 : `http://${hostname}:3000/api/v1/auth/reset-password/${plainToken}`;
 
@@ -152,7 +151,7 @@ export const PUT = async (request) => {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

@@ -2,9 +2,9 @@ import UsesModel from '@/app/api/v1/uses/uses.model';
 import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration';
-import environment from '@/constants/environment.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Fetches and returns data from the UsesModel collection.
@@ -43,7 +43,7 @@ export async function GET(request) {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

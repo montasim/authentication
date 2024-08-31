@@ -5,7 +5,6 @@ import usersSchema from '@/app/api/v1/(users)/users.model.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import defaultConstants from '@/constants/default.constants.js';
 import configuration from '@/configuration/configuration.js';
-import environment from '@/constants/environment.constants.js';
 import databaseService from '@/service/database.service.js';
 import EmailService from '@/service/email.service.js';
 
@@ -18,6 +17,7 @@ import generateVerificationToken from '@/utilities/generateVerificationToken.js'
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import incrementUse from '@/utilities/incrementUse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the user registration process, including validating the provided data, creating a new user, and sending a verification email.
@@ -183,7 +183,7 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (configuration.env === environment.PRODUCTION) {
+        if (configuration.env === getEnvironmentByName('PRODUCTION')) {
             emailVerificationLink = `https://${hostname}/api/v1/auth/verify/${plainToken}`;
             resendEmailVerificationLink = `https://${hostname}/api/v1/auth/resend-verification/${newUser._id}`;
         } else {
@@ -236,7 +236,7 @@ export const POST = async (request) => {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

@@ -5,7 +5,6 @@ import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
-import environment from '@/constants/environment.constants.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
@@ -16,6 +15,7 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 const sendResetConfirmationEmail = async (user) => {
     console.debug(
@@ -195,7 +195,7 @@ export const PUT = async (request, context) => {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );

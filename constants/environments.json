@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1a2b3c4d-5e6f-7g8h-9i0j-klmnopqrstuv",
+    "name": "DEVELOPMENT",
+    "value": "development",
+    "description": "/**\n * Represents the development environment.\n *\n * This environment is used during the application's development phase. It typically has features that assist in debugging,\n * such as verbose logging, hot-reloading, and developer tools. The development environment may connect to a local or shared\n * development database and often lacks the optimizations used in production to allow for quicker iteration and testing.\n */"
+  },
+  {
+    "id": "2b3c4d5e-6f7g-8h9i-0j1k-lmnopqrstuvw",
+    "name": "STAGING",
+    "value": "staging",
+    "description": "/**\n * Represents the staging environment.\n *\n * The staging environment is used for pre-production testing. It is an environment that mirrors production as closely as\n * possible, allowing for final testing before deployment. In staging, developers and testers can verify that everything works\n * as expected in a production-like environment, without affecting live users. It often includes performance testing,\n * user acceptance testing, and final verification of all features.\n */"
+  },
+  {
+    "id": "3c4d5e6f-7g8h-9i0j-1k2l-mnopqrstuvwx",
+    "name": "UAT",
+    "value": "uat",
+    "description": "/**\n * Represents the (users) acceptance testing (UAT) environment.\n *\n * The UAT environment is used to perform acceptance testing by end-users or stakeholders. It serves as the last phase of\n * testing before the application is deployed to production. In UAT, real users test the application to ensure it can handle\n * required tasks in real-world scenarios, according to specifications. This environment is typically isolated from development\n * and staging environments to prevent any unintentional changes or updates during testing.\n */"
+  },
+  {
+    "id": "4d5e6f7g-8h9i-0j1k-2l3m-nopqrstuvwxy",
+    "name": "TEST",
+    "value": "test",
+    "description": "/**\n * Represents the test environment.\n *\n * The test environment is primarily used for automated testing, such as unit tests, integration tests, and end-to-end tests.\n * This environment allows developers to run test suites to validate that the application works as expected. It often includes\n * mock data and may be configured to automatically reset to a known state between test runs. The test environment is critical\n * for maintaining software quality by catching bugs and issues early in the development cycle.\n */"
+  },
+  {
+    "id": "5e6f7g8h-9i0j-1k2l-3m4n-opqrstuvwxyz",
+    "name": "PRODUCTION",
+    "value": "production",
+    "description": "/**\n * Represents the production environment.\n *\n * The production environment is where the application is deployed for use by end-users. This environment is optimized for\n * performance, stability, and security. Production environments often use load balancers, caching mechanisms, and other\n * techniques to ensure high availability and responsiveness. Any changes to the production environment are typically done\n * through a controlled deployment process to minimize downtime and avoid issues that could impact the end-user experience.\n */"
+  }
+]

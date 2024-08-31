@@ -10,7 +10,7 @@ import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 export const POST = async (request) => {
     const { id, value } = await request.json();
 
-    const filePath = path.join(process.cwd(), 'constants/environments.json');
+    const filePath = path.join(process.cwd(), 'constants/patterns.json');
 
     try {
         // Read the existing JSON file
@@ -33,7 +33,7 @@ export const POST = async (request) => {
             request,
             true,
             httpStatus.OK,
-            'Environment updated successfully'
+            'Pattern updated successfully'
         );
     } catch (error) {
         return sendResponse(

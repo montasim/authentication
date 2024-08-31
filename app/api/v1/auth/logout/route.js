@@ -1,10 +1,10 @@
 import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
-import environment from '@/constants/environment.constants.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import incrementUse from '@/utilities/incrementUse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles user logout requests by invalidating the authentication token and removing session information.
@@ -75,7 +75,7 @@ export const GET = async (request) => {
             request,
             false,
             httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== environment.PRODUCTION
+            configuration.env !== getEnvironmentByName('PRODUCTION')
                 ? error.message
                 : 'Internal Server Error.'
         );
