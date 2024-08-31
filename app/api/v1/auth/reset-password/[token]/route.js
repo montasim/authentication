@@ -6,7 +6,6 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
@@ -93,16 +92,9 @@ export const PUT = async (request, context) => {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -125,31 +117,18 @@ export const PUT = async (request, context) => {
         if (!user) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Your password reset link is invalid or has expired. Please request a new password reset link.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Your password reset link is invalid or has expired. Please request a new password reset link.'
             );
         }
 
         if (!user.emails.find((email) => email.isPrimaryEmail)) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.UNPROCESSABLE_ENTITY,
-                    message: 'No primary email found. Please contact support.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.UNPROCESSABLE_ENTITY,
+                'No primary email found. Please contact support.'
             );
         }
 
@@ -162,16 +141,9 @@ export const PUT = async (request, context) => {
         if (!isPasswordValid) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'The old password you entered is incorrect. Please try again.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'The old password you entered is incorrect. Please try again.'
             );
         }
 
@@ -179,16 +151,9 @@ export const PUT = async (request, context) => {
         if (userData.newPassword !== userData.confirmNewPassword) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'The new passwords do not match. Please ensure both passwords are the same and try again.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'The new passwords do not match. Please ensure both passwords are the same and try again.'
             );
         }
 
@@ -198,15 +163,9 @@ export const PUT = async (request, context) => {
         if (passwordValidationResult !== 'Valid') {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: `New password validation failed: ${passwordValidationResult}`,
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                `New password validation failed: ${passwordValidationResult}`
             );
         }
 
@@ -221,13 +180,9 @@ export const PUT = async (request, context) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.OK,
-                message: 'Your password has been reset successfully.',
-                data: {},
-            },
-            { 'Content-Type': contentTypeConstants.JSON }
+            true,
+            httpStatus.OK,
+            'Your password has been reset successfully.'
         );
     } catch (error) {
         console.debug('Connecting to database service');
