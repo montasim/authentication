@@ -18,7 +18,7 @@ export default function Dashboard() {
                 const response = await axios.get('/api/v1/uses');
                 setUsers(response.data.data); // Assuming the response data is the array of uses
                 setIsLoading(false);
-                toast('Data fetched successfully.');
+                toast.success('Data fetched successfully.');
             } catch (err) {
                 setError(err.message); // Handle errors
                 setIsLoading(false); // Set loading to false if an error occurs

@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 
 import {
     Table,
@@ -9,28 +11,126 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { GoPencil } from 'react-icons/go';
-import patternsConstants from '@/constants/patterns.constants';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { GoCheck, GoPencil, GoX } from 'react-icons/go';
 
-const renderRows = () => {
-    const rows = [];
+import patternsConstants from '@/constants/patternsArray.json';
 
-    Object.entries(patternsConstants).map(([key, value]) => {
-        return rows.push(
-            <TableRow key={key}>
-                <TableCell className="font-medium">{key}</TableCell>
-                <TableCell>{value.toString()}</TableCell>
-                <TableCell className="text-right">
-                    <GoPencil className="cursor-pointer" />
-                </TableCell>
-            </TableRow>
-        );
-    });
-
-    return rows;
+const renderRows = (
+    patterns,
+    editingState,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+    handleInputChange
+) => {
+    return patterns.map((pattern) => (
+        <TableRow key={pattern.id}>
+            <TableCell className="font-medium">{pattern.name}</TableCell>
+            <TableCell>
+                <Input
+                    className={
+                        !editingState[pattern.id] ? 'pointer-events-none' : ''
+                    }
+                    type="text"
+                    value={editingState[pattern.id]?.value || pattern.value}
+                    onChange={(e) =>
+                        handleInputChange(pattern.id, e.target.value)
+                    }
+                    readOnly={!editingState[pattern.id]?.isEditing}
+                />
+            </TableCell>
+            <TableCell className="text-right">
+                {editingState[pattern.id]?.isEditing ? (
+                    <>
+                        <Button
+                            variant="outline"
+                            onClick={() => handleSaveClick(pattern.id)}
+                        >
+                            <GoCheck />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => handleCancelClick(pattern.id)}
+                        >
+                            <GoX />
+                        </Button>
+                    </>
+                ) : (
+                    <GoPencil
+                        className="cursor-pointer"
+                        onClick={() =>
+                            handleEditClick(pattern.id, pattern.value)
+                        }
+                    />
+                )}
+            </TableCell>
+        </TableRow>
+    ));
 };
 
 export default function Patterns() {
+    const [patterns, setPatterns] = useState([]);
+    const [editingState, setEditingState] = useState({});
+
+    useEffect(() => {
+        setPatterns(patternsConstants);
+    }, []);
+
+    const handleEditClick = (id, value) => {
+        setEditingState({
+            ...editingState,
+            [id]: { isEditing: true, value },
+        });
+    };
+
+    const handleSaveClick = async (id) => {
+        const newValue = editingState[id].value;
+
+        try {
+            const response = await fetch('/api/v1/dashboard/patterns', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, value: newValue }),
+            });
+
+            if (response.ok) {
+                setPatterns((prevPatterns) =>
+                    prevPatterns.map((pattern) =>
+                        pattern.id === id
+                            ? { ...pattern, value: newValue }
+                            : pattern
+                    )
+                );
+                setEditingState({
+                    ...editingState,
+                    [id]: { isEditing: false },
+                });
+            } else {
+                console.error('Failed to update pattern.');
+            }
+        } catch (error) {
+            console.error('Failed to update pattern:', error);
+        }
+    };
+
+    const handleCancelClick = (id) => {
+        setEditingState({
+            ...editingState,
+            [id]: { isEditing: false },
+        });
+    };
+
+    const handleInputChange = (id, newValue) => {
+        setEditingState({
+            ...editingState,
+            [id]: { ...editingState[id], value: newValue },
+        });
+    };
+
     return (
         <div>
             <Table>
@@ -44,7 +144,16 @@ export default function Patterns() {
                         <TableCell className="text-right">Edit</TableCell>
                     </TableRow>
                 </TableHeader>
-                <TableBody>{renderRows()}</TableBody>
+                <TableBody>
+                    {renderRows(
+                        patterns,
+                        editingState,
+                        handleEditClick,
+                        handleSaveClick,
+                        handleCancelClick,
+                        handleInputChange
+                    )}
+                </TableBody>
             </Table>
         </div>
     );
