@@ -2,66 +2,79 @@
   {
     "id": "f9d44b0b-0af1-4d8e-b08e-85a401d2d8cf",
     "name": "EMAIL",
-    "value": "^(?!.*\\btemp\\b)(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"
+    "value": "^(?!.*\\btemp\\b)(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
+    "description": "/**\n * Regular expression for validating email addresses.\n *\n * This pattern checks for a typical structure of an email address, ensuring it includes:\n * - A local part preceding the '@' symbol\n * - Valid characters in the local part, including alphanumeric characters and special characters\n * - A domain part following the '@' symbol with periods separating domain labels\n * - A top-level domain of at least two characters\n *\n * This regex does not validate the existence of the email domain or its active SMTP configuration.\n *\n * @example\n * // Returns true for valid emails\n * console.log(isValidEmail(\"example@example.com\")); // true\n * console.log(isValidEmail(\"user.name@sub.domain.com\")); // true\n *\n * // Returns false for invalid emails\n * console.log(isValidEmail(\"example.com\")); // false (missing '@')\n * console.log(isValidEmail(\"example@.com\")); // false (missing domain name)\n *\n * @param {string} email The email string to be validated.\n * @returns {boolean} Returns true if the email matches the pattern, false otherwise.\n */"
   },
   {
     "id": "1e23ac34-34f8-4a0a-8d5d-519b3768d5bc",
     "name": "MOBILE",
-    "value": "^(?:\\+8801|01)[3-9]\\d{8}$"
+    "value": "^(?:\\+8801|01)[3-9]\\d{8}$",
+    "description": "/**\n * Regular expression for validating Bangladeshi mobile phone numbers.\n *\n * This pattern ensures that the phone number:\n * - Starts with the country code '+880' or leading '01'\n * - Follows with a valid operator code (3-9)\n * - Ends with the remaining eight digits which represent the subscriber number\n *\n * This regex ensures format adherence but does not check the actual existence or activation status of the mobile number.\n *\n * @example\n * // Returns true for valid mobile numbers\n * console.log(isValidMobile(\"+8801812345678\")); // true\n * console.log(isValidMobile(\"01912345678\")); // true\n *\n * // Returns false for invalid mobile numbers\n * console.log(isValidMobile(\"01234567890\")); // false (invalid operator code)\n * console.log(isValidMobile(\"8801812345678\")); // false (missing leading '+')\n *\n * @param {string} mobile The mobile number to be validated.\n * @returns {boolean} Returns true if the mobile matches the pattern, false otherwise.\n */"
   },
   {
     "id": "ab3e6cfa-c118-46cb-9c6a-0cb660efb309",
     "name": "PASSWORD",
-    "value": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$"
+    "value": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$",
+    "description": "/**\n * Regular expression for validating passwords.\n *\n * This pattern requires a password to:\n * - Be between 8 to 30 characters in length\n * - Contain at least one uppercase letter\n * - Contain at least one lowercase letter\n * - Contain at least one digit\n * - Contain at least one special character from the set @$!%*?&\n *\n * This regex is designed to enforce strong password policies to enhance security.\n *\n * @example\n * // Returns true for valid passwords\n * console.log(isValidPassword(\"Example@123\")); // true\n * console.log(isValidPassword(\"Another$Password123\")); // true\n *\n * // Returns false for invalid passwords\n * console.log(isValidPassword(\"password\")); // false (no uppercase, digit, or special char)\n * console.log(isValidPassword(\"SHORT1!\")); // false (too short)\n *\n * @param {string} password The password string to be validated.\n * @returns {boolean} Returns true if the password matches the pattern, false otherwise.\n */"
   },
   {
     "id": "8d1c2c9c-524f-46c9-ace5-b1c6d36f44d0",
     "name": "ISO_8601_DATE",
-    "value": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?(Z|[+-]\\d{2}:\\d{2})$"
+    "value": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?(Z|[+-]\\d{2}:\\d{2})$",
+    "description": "/**\n * Regular expression for validating date strings in ISO 8601 format.\n *\n * This pattern matches date and time strings that include:\n * - A complete date (year, month, day)\n * - A 'T' character separator to indicate the start of the time element\n * - Time (hour, minute, second), optionally extended to include milliseconds\n * - A 'Z' indicating UTC time or a +/- offset for other time zones\n *\n * This format is widely used in computing as a way of unambiguously representing dates and times.\n *\n * @example\n * // Returns true for valid ISO 8601 dates\n * console.log(isValidISODate(\"2021-12-15T12:00:00Z\")); // true\n * console.log(isValidISODate(\"2021-12-15T12:00:00.123+02:00\")); // true\n *\n * // Returns false for invalid ISO 8601 dates\n * console.log(isValidISODate(\"2021-12-15 12:00:00\")); // false (missing 'T' and timezone)\n * console.log(isValidISODate(\"15-12-2021T12:00:00\")); // false (incorrect date format)\n *\n * @param {string} isoDate The ISO 8601 date string to be validated.\n * @returns {boolean} Returns true if the isoDate matches the pattern, false otherwise.\n */"
   },
   {
     "id": "bdd66e2e-1c9e-42fa-a5de-8e82f731e9f4",
     "name": "UPPERCASE",
-    "value": "[A-Z]"
+    "value": "[A-Z]",
+    "description": "/**\n * Regular expression to check for the presence of uppercase letters.\n *\n * This simple pattern matches any string that contains at least one uppercase letter from A to Z.\n *\n * @example\n * // Returns true if the string contains uppercase letters\n * console.log(hasUppercase(\"Hello\")); // true\n * console.log(hasUppercase(\"world\")); // false\n *\n * @param {string} text The text string to be checked.\n * @returns {boolean} Returns true if the text contains uppercase letters, false otherwise.\n */"
   },
   {
     "id": "bbd13ae3-b84a-4de8-b90e-7b2c23f62a49",
     "name": "LOWERCASE",
-    "value": "[a-z]"
+    "value": "[a-z]",
+    "description": "/**\n * Regular expression to check for the presence of lowercase letters.\n *\n * This pattern matches any string that contains at least one lowercase letter from a to z.\n *\n * @example\n * // Returns true if the string contains lowercase letters\n * console.log(hasLowercase(\"hello\")); // true\n * console.log(hasLowercase(\"WORLD\")); // false\n *\n * @param {string} text The text string to be checked.\n * @returns {boolean} Returns true if the text contains lowercase letters, false otherwise.\n */"
   },
   {
     "id": "02a029a3-9810-4e09-bdf3-98e43b9d4b51",
     "name": "DIGITS",
-    "value": "\\d"
+    "value": "\\d",
+    "description": "/**\n * Regular expression to check for the presence of digits.\n *\n * This pattern matches any string that contains at least one digit from 0 to 9.\n *\n * @example\n * // Returns true if the string contains digits\n * console.log(hasDigits(\"123abc\")); // true\n * console.log(hasDigits(\"abcdef\")); // false\n *\n * @param {string} text The text string to be checked.\n * @returns {boolean} Returns true if the text contains digits, false otherwise.\n */"
   },
   {
     "id": "21f1a12e-4012-4d29-8b1b-e5c48bb28d3d",
     "name": "SPECIAL_CHARACTERS",
-    "value": "[\\s~`!@#$%^&*+=\\-\\[\\]\\\\';,/{}|\\\":<>?()._]"
+    "value": "[\\s~`!@#$%^&*+=\\-\\[\\]\\\\';,/{}|\\\":<>?()._]",
+    "description": "/**\n * Regular expression to check for the presence of special characters.\n *\n * This pattern matches any string that contains at least one special character from a predefined set including\n * spaces and common punctuation marks. It helps in validating inputs that require at least one non-alphanumeric character.\n *\n * @example\n * // Returns true if the string contains special characters\n * console.log(hasSpecialCharacters(\"hello!\")); // true\n * console.log(hasSpecialCharacters(\"hello\")); // false\n *\n * @param {string} text The text string to be checked.\n * @returns {boolean} Returns true if the text contains special characters, false otherwise.\n */"
   },
   {
     "id": "4d65a7e2-1f4f-4be8-9cf0-cdfd5a6dc4d4",
     "name": "URL",
-    "value": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$"
+    "value": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+    "description": "/**\n * Regular expression for validating well-formed URLs.\n *\n * This pattern supports both HTTP and HTTPS protocols and can validate standard web URLs.\n * It covers the following parts of a URL:\n * - Optional protocol (HTTP or HTTPS)\n * - Domain name (supports subdomains)\n * - Top-level domain (minimum 2, maximum 6 letters)\n * - Optional path (can include letters, numbers, underscores, slashes, dots, and hyphens)\n * - Optional trailing slash\n *\n * It does not cover URL port numbers, query parameters, or anchor tags.\n *\n * @example\n * // Returns true for valid URLs\n * console.log(isValidUrl(\"http://www.example.com\")); // true\n * console.log(isValidUrl(\"https://example.com/about\")); // true\n *\n * // Returns false for invalid URLs\n * console.log(isValidUrl(\"www.example.com\")); // false (no protocol)\n * console.log(isValidUrl(\"example\")); // false (not a valid URL)\n *\n * @param {string} url The URL string to be validated.\n * @returns {boolean} Returns true if the URL matches the pattern, false otherwise.\n */"
   },
   {
     "id": "34bf1f25-99c5-44c8-b0a0-52e0919301df",
     "name": "FACEBOOK_URL",
-    "value": "^(https?:\\/\\/)(www\\.)?facebook\\.com\\/(profile\\.php\\?id=\\d+|[a-zA-Z0-9\\.-]+)$"
+    "value": "^(https?:\\/\\/)(www\\.)?facebook\\.com\\/(profile\\.php\\?id=\\d+|[a-zA-Z0-9\\.-]+)$",
+    "description": "/**\n * Regular expression for validating Facebook URLs.\n *\n * This pattern checks for URLs that correctly represent Facebook user profiles or pages. It supports both\n * HTTPS and HTTP protocols and allows optional 'www.' It validates URLs that direct to a user's profile\n * via a username (e.g., https://www.facebook.com/username) or via the profile ID\n * (e.g., https://facebook.com/profile.php?id=123456789).\n *\n * @example\n * console.log(isValidFacebookUrl(\"https://www.facebook.com/username\")); // true\n * console.log(isValidFacebookUrl(\"https://facebook.com/profile.php?id=123456789\")); // true\n * console.log(isValidFacebookUrl(\"https://facebook.com/username\")); // true\n * console.log(isValidFacebookUrl(\"http://www.facebook.com/username\")); // true\n * console.log(isValidFacebookUrl(\"www.facebook.com/username\")); // false, missing protocol\n * console.log(isValidFacebookUrl(\"https://facebook.com/\")); // false, missing username\n *\n * @param {string} url The Facebook URL to be validated.\n * @returns {boolean} Returns true if the URL is a valid Facebook URL, false otherwise.\n */"
   },
   {
     "id": "6c2c47c7-d07f-4c7f-a145-5fda3b4b7051",
     "name": "TWITTER_URL",
-    "value": "^(https?:\\/\\/)(www\\.)?twitter\\.com\\/([a-zA-Z0-9_]+)(\\/)?$"
+    "value": "^(https?:\\/\\/)(www\\.)?twitter\\.com\\/([a-zA-Z0-9_]+)(\\/)?$",
+    "description": "/**\n * Regular expression for validating Twitter URLs.\n *\n * This pattern ensures that the URL is a valid Twitter profile link. It supports both\n * HTTPS and HTTP protocols and does not require 'www.' It specifically checks for URLs that\n * lead to a user profile, which generally follow the format of https://twitter.com/username.\n * The username must consist of alphanumeric characters or underscores, and cannot start with a number.\n *\n * @example\n * console.log(isValidTwitterUrl(\"https://twitter.com/username\")); // true\n * console.log(isValidTwitterUrl(\"https://www.twitter.com/username123\")); // true\n * console.log(isValidTwitterUrl(\"https://twitter.com/\")); // false\n * console.log(isValidTwitterUrl(\"https://twitter.com/username/extra\")); // false\n *\n * @param {string} url The Twitter URL to be validated.\n * @returns {boolean} Returns true if the URL is a valid Twitter URL, false otherwise.\n */"
   },
   {
     "id": "4f8a23b3-91fc-4a8d-8e91-41bca94469b2",
     "name": "LINKEDIN_URL",
-    "value": "^(https?:\\/\\/)(www\\.)?linkedin\\.com\\/(in\\/[a-zA-Z0-9_-]+|company\\/[a-zA-Z0-9_-]+)$"
+    "value": "^(https?:\\/\\/)(www\\.)?linkedin\\.com\\/(in\\/[a-zA-Z0-9_-]+|company\\/[a-zA-Z0-9_-]+)$",
+    "description": "/**\n * Regular expression for validating LinkedIn URLs.\n *\n * This pattern checks URLs that are intended to point to LinkedIn profiles or company pages. It supports both\n * HTTPS and HTTP protocols and includes optional 'www.' The URL must specifically lead to either a user profile\n * with '/in/' followed by a username, or a company page with '/company/' followed by the company name.\n * Usernames and company names can contain alphanumeric characters, dashes, and underscores.\n *\n * @example\n * console.log(isValidLinkedinUrl(\"https://www.linkedin.com/in/username\")); // true\n * console.log(isValidLinkedinUrl(\"https://linkedin.com/in/username-123\")); // true\n * console.log(isValidLinkedinUrl(\"http://www.linkedin.com/company/company-name\")); // true\n * console.log(isValidLinkedinUrl(\"https://linkedin.com/company/company_name123\")); // true\n *\n * Examples of invalid LinkedIn URLs:\n * console.log(isValidLinkedinUrl(\"https://linkedin.com/username\")); // false (incorrect path)\n * console.log(isValidLinkedinUrl(\"http://www.linkedin.com/in/\")); // false (missing username)\n * console.log(isValidLinkedinUrl(\"https://linkedin.com/company/\")); // false (missing company name)\n *\n * @param {string} url The LinkedIn URL to be validated.\n * @returns {boolean} Returns true if the URL is a valid LinkedIn URL, false otherwise.\n */"
   },
   {
     "id": "e775d1a6-7c5d-45ed-97cb-0a8dca8a2c19",
     "name": "GITHUB_URL",
-    "value": "^(https?:\\/\\/)(www\\.)?github\\.com\\/([a-zA-Z0-9_-]+)(\\/[a-zA-Z0-9_-]+)?\\/?$"
+    "value": "^(https?:\\/\\/)(www\\.)?github\\.com\\/([a-zA-Z0-9_-]+)(\\/[a-zA-Z0-9_-]+)?\\/?$",
+    "description": "/**\n * Regular expression for validating GitHub URLs.\n *\n * This pattern ensures that the URL points to either a GitHub user profile or a repository. It supports both\n * HTTPS and HTTP protocols and optionally includes 'www.' The URL must specifically lead to a user profile\n * or a repository, which are typically structured as https://github.com/username or\n * https://github.com/username/repository. Usernames and repository names can include alphanumeric characters,\n * dashes, and underscores.\n *\n * @example\n * console.log(isValidGithubUrl(\"https://github.com/username\")); // true\n * console.log(isValidGithubUrl(\"https://github.com/username/repository\")); // true\n *\n * Examples of invalid GitHub URLs:\n * console.log(isValidGithubUrl(\"https://github.com/\")); // false (missing username)\n * console.log(isValidGithubUrl(\"http://github.com/username/\")); // false (trailing slash with no repository)\n * console.log(isValidGithubUrl(\"https://github.com/username//repo\")); // false (incorrect path formatting)\n *\n * @param {string} url The GitHub URL to be validated.\n * @returns {boolean} Returns true if the URL is a valid GitHub URL, false otherwise.\n */"
   }
 ]

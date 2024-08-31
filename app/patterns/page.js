@@ -11,11 +11,23 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GoCheck, GoPencil, GoX } from 'react-icons/go';
+import { GoCheck, GoEye, GoInfo, GoPencil, GoX } from 'react-icons/go';
 
 import patternsConstants from '@/constants/patternsArray.json';
+import { Textarea } from '@/components/ui/textarea';
 
 const renderRows = (
     patterns,
@@ -58,12 +70,43 @@ const renderRows = (
                         </Button>
                     </>
                 ) : (
-                    <GoPencil
-                        className="cursor-pointer"
-                        onClick={() =>
-                            handleEditClick(pattern.id, pattern.value)
-                        }
-                    />
+                    <>
+                        <AlertDialog>
+                            <AlertDialogTrigger>
+                                <GoInfo />
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                        Are you absolutely sure?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        <Textarea
+                                            className="resize-y h-96"
+                                            placeholder={
+                                                editingState[pattern.id]
+                                                    ?.description ||
+                                                pattern.description
+                                            }
+                                        />
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                        Cancel
+                                    </AlertDialogCancel>
+                                    {/*<AlertDialogAction>Continue</AlertDialogAction>*/}
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                        <GoPencil
+                            className="cursor-pointer"
+                            onClick={() =>
+                                handleEditClick(pattern.id, pattern.value)
+                            }
+                        />
+                    </>
                 )}
             </TableCell>
         </TableRow>
