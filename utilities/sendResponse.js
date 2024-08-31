@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import contentTypeConstants from '@/constants/contentType.constants';
+import getContentTypeByName from '@/utilities/getContentTypeByName';
 
 const sendResponse = (
     request,
@@ -8,7 +8,7 @@ const sendResponse = (
     message,
     data = {},
     headers = {
-        'Content-Type': contentTypeConstants.JSON,
+        'Content-Type': getContentTypeByName('JSON'),
     }
 ) => {
     toString(status).startsWith('5')

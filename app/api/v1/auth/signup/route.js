@@ -3,7 +3,6 @@ import moment from 'moment';
 
 import usersSchema from '@/app/api/v1/(users)/users.model.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import defaultConstants from '@/constants/default.constants.js';
 import configuration from '@/configuration/configuration.js';
 import databaseService from '@/service/database.service.js';
 import EmailService from '@/service/email.service.js';
@@ -18,6 +17,7 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import incrementUse from '@/utilities/incrementUse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 
 /**
  * Handles the user registration process, including validating the provided data, creating a new user, and sending a verification email.
@@ -167,7 +167,7 @@ export const POST = async (request) => {
                 first: userData.name,
             },
             image: {
-                downloadLink: defaultConstants.images.user.male,
+                downloadLink: getDefaultValueByName('MALE'),
             },
             emails: [emailObject],
             dateOfBirth,

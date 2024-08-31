@@ -5,9 +5,8 @@
  * simple patterns and common passwords.
  */
 
-import patterns from '@/constants/patterns.constants.js';
-
 import loadListFromFile from './loadListFromFile.js';
+import getPatternByName from '@/utilities/getPatternByName';
 
 /**
  * validatePassword - An asynchronous function that validates a password based on several criteria.
@@ -28,22 +27,22 @@ const validatePassword = async (password) => {
     }
 
     // Check for at least one uppercase letter
-    if (!patterns.UPPERCASE.test(password)) {
+    if (!getPatternByName('UPPERCASE').test(password)) {
         return 'Password must contain at least 1 uppercase letter';
     }
 
     // Check for at least one lowercase letter
-    if (!patterns.LOWERCASE.test(password)) {
+    if (!getPatternByName('LOWERCASE').test(password)) {
         return 'Password must contain at least 1 lowercase letter';
     }
 
     // Check for at least one digit
-    if (!patterns.DIGITS.test(password)) {
+    if (!getPatternByName('DIGITS').test(password)) {
         return 'Password must contain at least 1 digit';
     }
 
     // Check for at least one special character
-    if (!patterns.SPECIAL_CHARACTERS.test(password)) {
+    if (!getPatternByName('SPECIAL_CHARACTERS').test(password)) {
         return 'Password must contain at least 1 special character';
     }
 
@@ -60,8 +59,16 @@ const validatePassword = async (password) => {
     const commonPasswords = await loadListFromFile(
         '../vendor/commonPasswords.txt'
     );
+    // Check if the password is in the Set of common passwords
     if (commonPasswords.has(password)) {
+        console.error(
+            `Password "${password}" is found in the common passwords list.`
+        );
         return 'Use of common password is not allowed';
+    } else {
+        console.debug(
+            `Password "${password}" is not found in the common passwords list.`
+        );
     }
 
     // If all checks pass, return a success message or the valid password
