@@ -6,7 +6,6 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -56,16 +55,9 @@ export const POST = async (request) => {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -80,31 +72,17 @@ export const POST = async (request) => {
         if (!user) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.NOT_FOUND,
-                    message:
-                        'No account found with that email address. Please check your email address or register for a new account.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.NOT_FOUND,
+                'No account found with that email address. Please check your email address or register for a new account.'
             );
         }
         if (!user.isActive) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.FORBIDDEN,
-                    message:
-                        'Your account is disabled, please contact support.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.FORBIDDEN,
+                'Your account is disabled, please contact support.'
             );
         }
 
@@ -114,33 +92,20 @@ export const POST = async (request) => {
         if (!isEmailVerified) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.FORBIDDEN,
-                    message:
-                        'Please verify your email address to proceed with logging in.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.FORBIDDEN,
+                'Please verify your email address to proceed with logging in.'
             );
         }
 
         if (!user.passwordHash || user.mustChangePassword) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.FORBIDDEN,
-                    message: user.mustChangePassword
-                        ? 'Please change your password first.'
-                        : 'Please set your password first.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.FORBIDDEN,
+                user.mustChangePassword
+                    ? 'Please change your password first.'
+                    : 'Please set your password first.'
             );
         }
 
@@ -162,16 +127,9 @@ export const POST = async (request) => {
 
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.FORBIDDEN,
-                    message:
-                        'Incorrect password. Please try again or use the forgot password option to reset it.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.FORBIDDEN,
+                'Incorrect password. Please try again or use the forgot password option to reset it.'
             );
         }
 
@@ -215,15 +173,10 @@ export const POST = async (request) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.OK,
-                message: 'User logged in successfully.',
-                data: { ...user, token },
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            true,
+            httpStatus.OK,
+            'User logged in successfully.',
+            { ...user, token }
         );
     } catch (error) {
         console.debug('Connecting to database service');
@@ -234,18 +187,11 @@ export const POST = async (request) => {
 
         return sendResponse(
             request,
-            {
-                success: false,
-                status: httpStatus.INTERNAL_SERVER_ERROR,
-                message:
-                    configuration.env !== environment.PRODUCTION
-                        ? error.message
-                        : 'Internal Server Error.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            false,
+            httpStatus.INTERNAL_SERVER_ERROR,
+            configuration.env !== environment.PRODUCTION
+                ? error.message
+                : 'Internal Server Error.'
         );
     }
 };
