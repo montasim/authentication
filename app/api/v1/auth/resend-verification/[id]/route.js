@@ -6,7 +6,6 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -55,15 +54,9 @@ export const POST = async (request, context) => {
         if (!id) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: 'ID not provided.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'ID not provided.'
             );
         }
 
@@ -76,16 +69,9 @@ export const POST = async (request, context) => {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -98,15 +84,9 @@ export const POST = async (request, context) => {
         if (!userDetails) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.NOT_FOUND,
-                    message: 'User not found.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.NOT_FOUND,
+                'User not found.'
             );
         }
 
@@ -117,15 +97,9 @@ export const POST = async (request, context) => {
         if (!primaryEmail) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: 'No primary email found. Please contact support.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'No primary email found. Please contact support.'
             );
         }
 
@@ -133,15 +107,9 @@ export const POST = async (request, context) => {
         if (primaryEmail.isEmailVerified) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.FORBIDDEN,
-                    message: 'This email address has already been verified.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.FORBIDDEN,
+                'This email address has already been verified.'
             );
         }
 
@@ -197,15 +165,9 @@ export const POST = async (request, context) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.OK,
-                message: 'Verification email sent successfully.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            true,
+            httpStatus.OK,
+            'Verification email sent successfully.'
         );
     } catch (error) {
         console.debug('Connecting to database service');
