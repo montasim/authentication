@@ -216,18 +216,11 @@ export const POST = async (request, context) => {
 
         return sendResponse(
             request,
-            {
-                success: false,
-                status: httpStatus.INTERNAL_SERVER_ERROR,
-                message:
-                    configuration.env !== environment.PRODUCTION
-                        ? error.message
-                        : 'Internal Server Error.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            false,
+            httpStatus.INTERNAL_SERVER_ERROR,
+            configuration.env !== environment.PRODUCTION
+                ? error.message
+                : 'Internal Server Error.'
         );
     }
 };

@@ -5,6 +5,8 @@ import contentTypeConstants from '@/constants/contentType.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import incrementUse from '@/utilities/incrementUse';
+import configuration from '@/configuration/configuration';
+import environment from '@/constants/environment.constants';
 
 /**
  * Fetches and returns data from the UsesModel collection.
@@ -28,9 +30,6 @@ export async function GET(request) {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         // Create response
         const response = {
             success: false,
@@ -47,17 +46,13 @@ export async function GET(request) {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        const response = {
-            success: false,
-            status: httpStatus.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error.',
-            data: {},
-        };
-        return sendResponse(request, response, {
-            'Content-Type': contentTypeConstants.JSON,
-        });
+        return sendResponse(
+            request,
+            false,
+            httpStatus.INTERNAL_SERVER_ERROR,
+            configuration.env !== environment.PRODUCTION
+                ? error.message
+                : 'Internal Server Error.'
+        );
     }
 }

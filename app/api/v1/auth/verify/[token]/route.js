@@ -12,6 +12,8 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
+import configuration from '@/configuration/configuration';
+import environment from '@/constants/environment.constants';
 
 /**
  * Handles the user email verification process by validating the provided verification token, updating the user's email verification status, and sending a welcome email.
@@ -220,14 +222,13 @@ export async function POST(request, context) {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        const response = {
-            success: false,
-            status: httpStatus.INTERNAL_SERVER_ERROR,
-            message: error.message || 'Failed to verify email.',
-            data: {},
-        };
-        return sendResponse(request, response, {
-            'Content-Type': contentTypeConstants.JSON,
-        });
+        return sendResponse(
+            request,
+            false,
+            httpStatus.INTERNAL_SERVER_ERROR,
+            configuration.env !== environment.PRODUCTION
+                ? error.message
+                : 'Internal Server Error.'
+        );
     }
 }
