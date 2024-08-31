@@ -12,6 +12,30 @@ import {
 import { GoPencil } from 'react-icons/go';
 import defaultConstants from '@/constants/default.constants';
 
+const renderRows = () => {
+    const rows = [];
+
+    for (const category in defaultConstants.images) {
+        for (const type in defaultConstants.images[category]) {
+            rows.push(
+                <TableRow key={`${category}-${type}`}>
+                    <TableCell className="font-medium">Images</TableCell>
+                    <TableCell>{category}</TableCell>
+                    <TableCell>{type}</TableCell>
+                    <TableCell>
+                        {defaultConstants.images[category][type]}
+                    </TableCell>
+                    <TableCell className="text-right">
+                        <GoPencil className="cursor-pointer" />
+                    </TableCell>
+                </TableRow>
+            );
+        }
+    }
+
+    return rows;
+};
+
 export default function Dashboard() {
     return (
         <div>
@@ -26,28 +50,7 @@ export default function Dashboard() {
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
-                    <TableRow>
-                        <TableCell className="font-medium">Images</TableCell>
-                        <TableCell>Users</TableCell>
-                        <TableCell>Male</TableCell>
-                        <TableCell>
-                            {defaultConstants.images.user.male}
-                        </TableCell>
-                        <TableCell className="text-right">
-                            <GoPencil className="cursor-pointer" />
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell className="font-medium">Images</TableCell>
-                        <TableCell>Users</TableCell>
-                        <TableCell>Female</TableCell>
-                        <TableCell>
-                            {defaultConstants.images.user.female}
-                        </TableCell>
-                        <TableCell className="text-right"></TableCell>
-                    </TableRow>
-                </TableBody>
+                <TableBody>{renderRows()}</TableBody>
             </Table>
         </div>
     );
