@@ -1,0 +1,8 @@
+[
+  {
+    "id": "12345678-90ab-cdef-1234-567890abcdef",
+    "name": "JSON",
+    "value": "application/json",
+    "description": "/**\n * Represents the MIME type for JSON content.\n *\n * This content type is used to indicate that the body of the request or response is in JSON format.\n * JSON (JavaScript Object Notation) is a lightweight data-interchange format that is easy for humans to read\n * and write, and easy for machines to parse and generate. It is commonly used for API requests and responses,\n * allowing structured data to be exchanged between clients and servers.\n */"
+  }
+]
