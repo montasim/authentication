@@ -9,7 +9,8 @@ import { Schema } from 'mongoose';
 
 import constants from '@/constants/constants.js';
 import usersConstants from '@/app/api/v1/(users)/users.constants.js';
-import patternsConstants from '@/constants/patterns.constants.js';
+
+import getPatternByName from '@/utilities/getPatternByName';
 
 /**
  * @schema usernameSchema
@@ -350,7 +351,7 @@ const urlSchema = {
     type: String,
     trim: true,
     match: [
-        patternsConstants.URL,
+        getPatternByName('URL'),
         'Invalid website format. Please enter a valid website.',
     ],
     maxlength: [
@@ -376,7 +377,7 @@ const emailSchema = {
     ],
     required: [true, 'An email address is required to register.'],
     match: [
-        patternsConstants.EMAIL,
+        getPatternByName('EMAIL'),
         'Invalid email format. Please enter a valid email address.',
     ],
     minlength: [
@@ -445,7 +446,7 @@ const mobileSchema = {
         'This mobile number is already registered. Please use a different mobile number.',
     ],
     match: [
-        patternsConstants.MOBILE,
+        getPatternByName('MOBILE'),
         'Invalid mobile number format. Please enter a valid mobile number.',
     ],
     minlength: [
@@ -522,7 +523,7 @@ const facebookSchema = {
     sparse: true,
     unique: [true, 'This Facebook URL is already linked to another account.'],
     match: [
-        patternsConstants.FACEBOOK_URL,
+        getPatternByName('FACEBOOK_URL'),
         'Invalid facebook url format. Please enter a valid facebook url.',
     ],
     maxlength: [
@@ -543,7 +544,7 @@ const twitterSchema = {
     sparse: true,
     unique: [true, 'This Twitter handle is already linked to another account.'],
     match: [
-        patternsConstants.TWITTER_URL,
+        getPatternByName('TWITTER_URL'),
         'Invalid twitter url format. Please enter a valid twitter url.',
     ],
     maxlength: [
@@ -567,7 +568,7 @@ const linkedInSchema = {
         'This LinkedIn profile is already linked to another account.',
     ],
     match: [
-        patternsConstants.LINKEDIN_URL,
+        getPatternByName('LINKEDIN_URL'),
         'Invalid linkedIn url format. Please enter a valid linkedIn url.',
     ],
     maxlength: [
@@ -591,7 +592,7 @@ const githubSchema = {
         'This GitHub username is already linked to another account.',
     ],
     match: [
-        patternsConstants.GITHUB_URL,
+        getPatternByName('GITHUB_URL'),
         'Invalid github url format. Please enter a valid github url.',
     ],
     maxlength: [
