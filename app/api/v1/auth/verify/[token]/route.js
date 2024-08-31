@@ -4,7 +4,8 @@ import usersSchema from '@/app/api/v1/(users)/users.model.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
-import contentTypeConstants from '@/constants/contentType.constants';
+import configuration from '@/configuration/configuration';
+import environment from '@/constants/environment.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
@@ -12,8 +13,6 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
-import configuration from '@/configuration/configuration';
-import environment from '@/constants/environment.constants';
 
 /**
  * Handles the user email verification process by validating the provided verification token, updating the user's email verification status, and sending a welcome email.
@@ -56,16 +55,9 @@ export async function POST(request, context) {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -85,17 +77,12 @@ export async function POST(request, context) {
             'emails.emailVerifyToken': hashedToken,
         });
         if (!user) {
-            const response = {
-                success: false,
-                status: httpStatus.NOT_FOUND,
-                message: 'The verification link is invalid.',
-                data: {},
-            };
-
-            // Return an error response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                'The verification link is invalid.'
+            );
         }
 
         // Find the specific email record that matches the hashed token
@@ -103,47 +90,29 @@ export async function POST(request, context) {
             (email) => email.emailVerifyToken === hashedToken
         );
         if (!emailDetails) {
-            const response = {
-                success: false,
-                status: httpStatus.FORBIDDEN,
-                message:
-                    'The verification link is invalid. Please request a new verification email.',
-                data: {},
-            };
-
-            // Return an error response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.FORBIDDEN,
+                'The verification link is invalid. Please request a new verification email.'
+            );
         }
 
         // Check if the email has already been verified or if the token has expired
         if (emailDetails.isEmailVerified) {
-            const response = {
-                success: false,
-                status: httpStatus.BAD_REQUEST,
-                message:
-                    'This email has already been verified. No further action is required.',
-                data: {},
-            };
-
-            // Return an error response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.BAD_REQUEST,
+                'This email has already been verified. No further action is required.'
+            );
         } else if (emailDetails.emailVerifyTokenExpires < Date.now()) {
-            const response = {
-                success: false,
-                status: httpStatus.FORBIDDEN,
-                message:
-                    'The verification link has expired. Please request a new verification email.',
-                data: {},
-            };
-
-            // Return an error response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.FORBIDDEN,
+                'The verification link has expired. Please request a new verification email.'
+            );
         }
 
         console.debug('Verification checks passed, updating user document');
@@ -159,17 +128,12 @@ export async function POST(request, context) {
         );
 
         if (updateResult.modifiedCount !== 1) {
-            const response = {
-                success: false,
-                status: httpStatus.INTERNAL_SERVER_ERROR,
-                message: 'Failed to verify the email. Please try again.',
-                data: {},
-            };
-
-            // Return an error response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.INTERNAL_SERVER_ERROR,
+                'Failed to verify the email. Please try again.'
+            );
         }
 
         console.debug(
@@ -203,18 +167,12 @@ export async function POST(request, context) {
             )
         );
 
-        // Create response
-        const response = {
-            success: false,
-            status: httpStatus.OK,
-            message: 'Email has been successfully verified.',
-            data: {},
-        };
-
-        // Return an error response
-        return sendResponse(request, response, {
-            'Content-Type': contentTypeConstants.JSON,
-        });
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            'Email has been successfully verified.'
+        );
     } catch (error) {
         console.debug('Connecting to database service');
         await databaseService.connect();
