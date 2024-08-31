@@ -10,7 +10,7 @@ import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 export const POST = async (request) => {
     const { id, value } = await request.json();
 
-    const filePath = path.join(process.cwd(), 'constants/urls.json');
+    const filePath = path.join(process.cwd(), 'constants/patterns.json');
 
     try {
         // Read the existing JSON file
@@ -18,14 +18,14 @@ export const POST = async (request) => {
         const patterns = JSON.parse(fileData);
 
         // Find the pattern by ID and update its value
-        const updatedUrls = patterns.map((url) =>
-            url.id === id ? { ...url, value } : url
+        const updatedEnvironment = patterns.map((pattern) =>
+            pattern.id === id ? { ...pattern, value } : pattern
         );
 
         // Write the updated data back to the JSON file
         fs.writeFileSync(
             filePath,
-            JSON.stringify(updatedUrls, null, 2),
+            JSON.stringify(updatedEnvironment, null, 2),
             'utf8'
         );
 
@@ -33,7 +33,7 @@ export const POST = async (request) => {
             request,
             true,
             httpStatus.OK,
-            'Url updated successfully'
+            'Pattern updated successfully'
         );
     } catch (error) {
         return sendResponse(

@@ -47,31 +47,6 @@ const urls = Object.freeze({
     GITHUB: 'https://github.com',
 });
 
-const confirmationText = Object.freeze({
-    deleteUserAccount: 'Delete my account',
-});
-
-const defaultName = Object.freeze({
-    adminRole: 'Admin',
-});
-
-const adminId = '66c87c740f7252ae370a2abd';
-
-const trending = {
-    thresholds: {
-        BOOKS: 2,
-        CATEGORIES: 2,
-        PUBLICATIONS: 2,
-        WRITERS: 2,
-    },
-    limit: {
-        BOOKS: 10,
-        CATEGORIES: 10,
-        PUBLICATIONS: 10,
-        WRITERS: 10,
-    },
-};
-
 /**
  * Provides a structured and centralized collection of various constants needed for input validation,
  * configuration of external links, and other hardcoded values that are used across the application.
@@ -88,10 +63,6 @@ const trending = {
 const constants = Object.freeze({
     lengths,
     urls,
-    confirmationText,
-    defaultName,
-    adminId,
-    trending,
 });
 
 export default constants;

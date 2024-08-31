@@ -79,10 +79,14 @@ const connect = async () => {
 
     // Attempt to connect to the database
     try {
-        await mongoose.connect(configuration.mongoose.url);
-        const dbName = mongoose.connection.db.databaseName;
-
-        console.info(`Database connected successfully to '${dbName}'.`);
+        let dbName;
+        if (mongoose.connection.readyState === 1) {
+            dbName = mongoose.connection.db.databaseName;
+            console.info(`Database already connected to ${dbName}`);
+        } else {
+            await mongoose.connect(configuration.mongoose.url);
+            console.info(`Database connected successfully to '${dbName}'.`);
+        }
     } catch (error) {
         console.error(
             `Initial database connection attempt failed: ${error.message}`

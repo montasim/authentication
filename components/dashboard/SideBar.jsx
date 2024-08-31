@@ -48,6 +48,16 @@ export default function SideBar() {
                     </p>
                 </Link>
 
+                <Link href="/manage-urls">
+                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                            <HiOutlineHome />
+                        </span>
+
+                        <span className="">Manage URLs</span>
+                    </p>
+                </Link>
+
                 <Link href="/environments">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
