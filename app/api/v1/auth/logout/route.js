@@ -2,7 +2,6 @@ import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import environment from '@/constants/environment.constants.js';
-import contentTypeConstants from '@/constants/contentType.constants';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import incrementUse from '@/utilities/incrementUse';
@@ -44,15 +43,9 @@ export const GET = async (request) => {
         if (!jwtToken) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.UNAUTHORIZED,
-                    message: 'No authentication token provided.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.UNAUTHORIZED,
+                'No authentication token provided.'
             );
         }
 
@@ -67,15 +60,9 @@ export const GET = async (request) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.OK,
-                message: 'You have been logged out successfully.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            true,
+            httpStatus.OK,
+            'You have been logged out successfully.'
         );
     } catch (error) {
         console.debug('Connecting to database service');
