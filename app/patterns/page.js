@@ -30,7 +30,7 @@ const renderRows = () => {
     return rows;
 };
 
-export default function Dashboard() {
+export default function Patterns() {
     return (
         <div>
             <Table>

@@ -3,6 +3,7 @@ import './globals.css';
 import NavBar from '@/components/dashboard/NavBar';
 import SideBar from '@/components/dashboard/SideBar';
 import { Card } from '@/components/ui/card';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
                         </div>
                     </div>
                 </div>
+                <Toaster />
             </body>
         </html>
     );

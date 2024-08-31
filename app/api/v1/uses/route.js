@@ -33,7 +33,7 @@ export async function GET(request) {
             true,
             httpStatus.OK,
             'Uses fetched successfully.',
-            await UsesModel.find()
+            await UsesModel.findOne()
         );
     } catch (error) {
         console.debug('Connecting to database service');
