@@ -1,12 +1,10 @@
 import UsesModel from '@/app/api/v1/uses/uses.model';
 import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import contentTypeConstants from '@/constants/contentType.constants';
-
-import sendResponse from '@/utilities/sendResponse.js';
-import incrementUse from '@/utilities/incrementUse';
 import configuration from '@/configuration/configuration';
 import environment from '@/constants/environment.constants';
+
+import sendResponse from '@/utilities/sendResponse.js';
 
 /**
  * Fetches and returns data from the UsesModel collection.
@@ -30,18 +28,13 @@ export async function GET(request) {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        // Create response
-        const response = {
-            success: false,
-            status: httpStatus.OK,
-            message: 'Uses fetched successfully.',
-            data: await UsesModel.find(),
-        };
-
-        // Return an error response
-        return sendResponse(request, response, {
-            'Content-Type': contentTypeConstants.JSON,
-        });
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            'Uses fetched successfully.',
+            await UsesModel.find()
+        );
     } catch (error) {
         console.debug('Connecting to database service');
         await databaseService.connect();
