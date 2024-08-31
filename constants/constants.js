@@ -57,13 +57,6 @@ const defaultName = Object.freeze({
 
 const adminId = '66c87c740f7252ae370a2abd';
 
-const activityType = {
-    APPEARANCE: 'appearance',
-    PROFILE: 'profile',
-    ACCOUNT: 'account',
-    SECURITY: 'security',
-};
-
 const trending = {
     thresholds: {
         BOOKS: 2,
@@ -98,7 +91,6 @@ const constants = Object.freeze({
     confirmationText,
     defaultName,
     adminId,
-    activityType,
     trending,
 });
 

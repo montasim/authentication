@@ -9,8 +9,11 @@ import { Schema } from 'mongoose';
 
 import constants from '@/constants/constants.js';
 import usersConstants from '@/app/api/v1/(users)/users.constants.js';
+import activityTypeValues from '@/constants/activityTypes.json';
 
 import getPatternByName from '@/utilities/getPatternByName';
+
+const activityTypes = activityTypeValues.map((type) => type.value);
 
 /**
  * @schema usernameSchema
@@ -767,7 +770,7 @@ const sessionsSchema = new Schema({
 const activitiesSchema = new Schema({
     category: {
         type: String,
-        enum: Object.values(usersConstants.activityType),
+        enum: activityTypes,
         description:
             'Describes the category of activity performed by the (users), such as security, appearance.',
     },

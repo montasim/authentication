@@ -157,28 +157,10 @@ const pattern = {
  */
 const imageSize = 1.1 * 1024 * 1024; // 1.1 MB
 
-/**
- * Types of (users) activities for logging purposes.
- *
- * @constant
- * @type {Object}
- * @property {string} APPEARANCE - Activity type for appearance-related changes.
- * @property {string} PROFILE - Activity type for profile-related changes.
- * @property {string} ACCOUNT - Activity type for account-related changes.
- * @property {string} SECURITY - Activity type for security-related changes.
- */
-const activityType = {
-    APPEARANCE: 'appearance',
-    PROFILE: 'profile',
-    ACCOUNT: 'account',
-    SECURITY: 'security',
-};
-
 const usersConstants = {
     lengths,
     pattern,
     imageSize,
-    activityType,
 };
 
 export default usersConstants;
