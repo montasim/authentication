@@ -1,11 +1,10 @@
 import globals from 'globals';
-import pluginJs from '@eslint/js';
 import pluginReact from 'eslint-plugin-react';
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default [
     {
-        files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'], // Lint JavaScript and TypeScript files
+        files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'], // Lint JavaScript and TypeScript files
         languageOptions: {
             ecmaVersion: 2020,
             sourceType: 'module',
