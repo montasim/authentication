@@ -60,16 +60,9 @@ export const POST = async (request) => {
         if (!prepareModelName) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Invalid model name. Only alphabets are allowed without any spaces, hyphens, or special characters.'
             );
         }
 
@@ -87,16 +80,9 @@ export const POST = async (request) => {
         // if (existingAdmin) {
         //     return sendResponse(
         //         request,
-        //         {
-        //             success: false,
-        //             status: httpStatus.FORBIDDEN,
-        //             message:
-        //                 'This email address is already registered as an admin. Cannot be a user and admin at the same time.',
-        //             data: {},
-        //         },
-        //         {
-        //             'Content-Type': contentTypeConstants.JSON,
-        //         }
+        //         false,
+        //         httpStatus.FORBIDDEN,
+        //         'This email address is already registered as an admin. Cannot be a user and admin at the same time.',
         //     );
         // }
 
@@ -110,16 +96,9 @@ export const POST = async (request) => {
         if (existingUser) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.CONFLICT,
-                    message:
-                        'This email address is already registered. Please log in or use the forgot password option if you need to recover your password.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.CONFLICT,
+                'This email address is already registered. Please log in or use the forgot password option if you need to recover your password.'
             );
         }
 
@@ -128,32 +107,20 @@ export const POST = async (request) => {
         if (emailValidationResult !== 'Valid') {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: emailValidationResult,
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                emailValidationResult
             );
         }
 
         console.debug('Matching passwords');
         if (userData.password !== userData.confirmPassword) {
-            const response = {
-                success: false,
-                status: httpStatus.BAD_REQUEST,
-                message:
-                    'The passwords you entered do not match. Please try again.',
-                data: {},
-            };
-
-            // Return a response
-            return sendResponse(request, response, {
-                'Content-Type': contentTypeConstants.JSON,
-            });
+            return sendResponse(
+                request,
+                false,
+                httpStatus.BAD_REQUEST,
+                'The passwords you entered do not match. Please try again.'
+            );
         }
 
         console.debug('Validating password');
@@ -163,15 +130,9 @@ export const POST = async (request) => {
         if (passwordValidationResult !== 'Valid') {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message: passwordValidationResult,
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                passwordValidationResult
             );
         }
 
@@ -179,16 +140,9 @@ export const POST = async (request) => {
         if (!moment(userData.dateOfBirth, 'DD-MM-YYYY', true).isValid()) {
             return sendResponse(
                 request,
-                {
-                    success: false,
-                    status: httpStatus.BAD_REQUEST,
-                    message:
-                        'Date of birth must be in the format DD-MM-YYYY and a valid date.',
-                    data: {},
-                },
-                {
-                    'Content-Type': contentTypeConstants.JSON,
-                }
+                false,
+                httpStatus.BAD_REQUEST,
+                'Date of birth must be in the format DD-MM-YYYY and a valid date.'
             );
         }
 
@@ -268,16 +222,9 @@ export const POST = async (request) => {
 
         return sendResponse(
             request,
-            {
-                success: true,
-                status: httpStatus.CREATED,
-                message:
-                    'User registered successfully. Please check your email for verification instructions.',
-                data: {},
-            },
-            {
-                'Content-Type': contentTypeConstants.JSON,
-            }
+            true,
+            httpStatus.CREATED,
+            'User registered successfully. Please check your email for verification instructions.'
         );
     } catch (error) {
         console.debug('Connecting to database service');
