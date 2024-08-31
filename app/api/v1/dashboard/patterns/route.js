@@ -10,7 +10,7 @@ import sendResponse from '@/utilities/sendResponse';
 export const POST = async (request) => {
     const { id, value } = await request.json();
 
-    const filePath = path.join(process.cwd(), 'constants/patternsArray.json');
+    const filePath = path.join(process.cwd(), 'constants/patterns.json');
 
     try {
         // Read the existing JSON file
