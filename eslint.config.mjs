@@ -19,7 +19,10 @@ export default [
         },
         rules: {
             // General JavaScript/ESLint rules
-            'no-console': ['warn', { allow: ['error', 'warn', 'info'] }],
+            'no-console': [
+                'warn',
+                { allow: ['error', 'warn', 'info', 'debug'] },
+            ],
             'prefer-arrow-callback': ['error', { allowNamedFunctions: false }],
             'prefer-const': 'error',
             'no-var': 'error',
