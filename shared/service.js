@@ -65,8 +65,39 @@ const createOrUpdateDefaults = async (
     }
 };
 
+const getValuesFromRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting process to retrieve ${entityName}`);
+
+    try {
+        const data = await redis.get(redisKey);
+        if (!data) {
+            console.error(`No ${entityName} data found in Redis.`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} data found`,
+                {}
+            );
+        }
+
+        const values = JSON.parse(data);
+        console.debug(`Successfully retrieved ${entityName} from Redis.`);
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${toSentenceCase(entityName)} retrieved successfully`,
+            values
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
+    getValuesFromRedis,
 };
 
 export default service;

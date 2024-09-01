@@ -19,33 +19,11 @@ export const POST = async (request) => {
 };
 
 export const GET = async (request) => {
-    console.debug('Starting process to retrieve activity types');
-
-    try {
-        const data = await redis.get('activityTypes');
-        if (!data) {
-            console.error('No activity types data found in Redis.');
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'No data found',
-                {}
-            );
-        }
-
-        const activityTypes = JSON.parse(data);
-        console.debug('Successfully retrieved activity types from Redis.');
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Activity types retrieved successfully',
-            activityTypes
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.getValuesFromRedis(
+        request,
+        'activityTypes',
+        'activity types'
+    );
 };
 
 export const DELETE = async (request) => {

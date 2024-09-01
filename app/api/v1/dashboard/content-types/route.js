@@ -19,33 +19,7 @@ export const POST = async (request) => {
 };
 
 export const GET = async (request) => {
-    console.debug('Starting process to retrieve content types');
-
-    try {
-        const data = await redis.get('contentTypes');
-        if (!data) {
-            console.error('No content types data found in Redis.');
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'No data found',
-                {}
-            );
-        }
-
-        const contentTypes = JSON.parse(data);
-        console.debug('Successfully retrieved content types from Redis.');
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Content types retrieved successfully',
-            contentTypes
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.getValuesFromRedis(request, 'contentTypes', 'content types');
 };
 
 export const DELETE = async (request) => {
