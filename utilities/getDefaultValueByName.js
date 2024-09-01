@@ -1,4 +1,4 @@
-import defaultValues from '@/constants/default.json';
+import defaultValues from '@/constants/defaultGenderImage.json';
 
 const getDefaultValueByName = (defaultValueName) => {
     const defaultValuesObject = defaultValues.find(

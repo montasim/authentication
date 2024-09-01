@@ -10,7 +10,10 @@ import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 export const POST = async (request) => {
     const { id, value } = await request.json();
 
-    const filePath = path.join(process.cwd(), 'constants/default.json');
+    const filePath = path.join(
+        process.cwd(),
+        'constants/defaultGenderImage.json'
+    );
 
     try {
         // Read the existing JSON file
