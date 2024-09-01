@@ -29,8 +29,8 @@ export default function RenderDialog({
                         <Textarea
                             className="resize-y h-96"
                             value={
-                                editingState[activity.id]?.description ||
-                                activity.description
+                                editingState[activity?.id]?.description ||
+                                activity?.description
                             }
                         />
                     </AlertDialogDescription>
