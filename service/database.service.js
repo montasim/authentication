@@ -85,6 +85,7 @@ const connect = async () => {
             console.info(`Database already connected to ${dbName}`);
         } else {
             await mongoose.connect(configuration.mongoose.url);
+            dbName = mongoose.connection.db.databaseName;
             console.info(`Database connected successfully to '${dbName}'.`);
         }
     } catch (error) {
