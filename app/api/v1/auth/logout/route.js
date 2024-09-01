@@ -1,10 +1,9 @@
 import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import configuration from '@/configuration/configuration.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import incrementUse from '@/utilities/incrementUse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
  * Handles user logout requests by invalidating the authentication token and removing session information.
@@ -71,13 +70,6 @@ export const GET = async (request) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

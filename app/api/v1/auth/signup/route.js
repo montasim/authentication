@@ -18,6 +18,7 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import incrementUse from '@/utilities/incrementUse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 import getDefaultValueByName from '@/utilities/getDefaultValueByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
  * Handles the user registration process, including validating the provided data, creating a new user, and sending a verification email.
@@ -232,13 +233,6 @@ export const POST = async (request) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

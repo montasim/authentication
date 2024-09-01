@@ -4,7 +4,6 @@ import usersSchema from '@/app/api/v1/(users)/users.model.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
-import configuration from '@/configuration/configuration.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
@@ -15,7 +14,7 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 const sendResetConfirmationEmail = async (user) => {
     console.debug(
@@ -191,13 +190,6 @@ export const PUT = async (request, context) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

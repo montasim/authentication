@@ -4,7 +4,6 @@ import usersSchema from '@/app/api/v1/(users)/users.model';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
-import configuration from '@/configuration/configuration.js';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -13,7 +12,7 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import createAuthenticationToken from '@/utilities/createAuthenticationToken.js';
 import incrementUse from '@/utilities/incrementUse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
  * Handles user login requests by authenticating the user based on provided credentials.
@@ -185,13 +184,6 @@ export const POST = async (request) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

@@ -12,6 +12,7 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
  * Handles the password reset request process by generating a verification token and sending a password reset email.
@@ -147,13 +148,6 @@ export const PUT = async (request) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

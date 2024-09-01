@@ -13,6 +13,7 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import incrementUse from '@/utilities/incrementUse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
  * Handles the process of resending an email verification link to the user.
@@ -176,13 +177,6 @@ export const POST = async (request, context) => {
         console.debug('Incrementing authentication module usage despite error');
         await incrementUse();
 
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };

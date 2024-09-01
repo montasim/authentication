@@ -6,7 +6,7 @@ import httpStatus from '@/constants/httpStatus.constants';
 import configuration from '@/configuration/configuration';
 
 import sendResponse from '@/utilities/sendResponse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 const redis = new Redis(configuration.redis.url);
 
@@ -55,14 +55,7 @@ export const POST = async (request) => {
             contentTypes
         );
     } catch (error) {
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };
 
@@ -90,14 +83,7 @@ export const GET = async (request, response) => {
             activityTypes
         );
     } catch (error) {
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };
 
@@ -114,13 +100,6 @@ export const DELETE = async (request) => {
             'All activity types deleted successfully'
         );
     } catch (error) {
-        return sendResponse(
-            request,
-            false,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            configuration.env !== getEnvironmentByName('PRODUCTION')
-                ? error.message
-                : 'Internal Server Error.'
-        );
+        return sendErrorResponse(request, error);
     }
 };
