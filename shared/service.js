@@ -126,10 +126,58 @@ const deleteValuesFromRedis = async (request, redisKey, entityName) => {
     }
 };
 
+const getValueByIdFromRedis = async (
+    request,
+    context,
+    redisKey,
+    entityName
+) => {
+    console.debug(`Starting process to retrieve a specific ${entityName}`);
+
+    try {
+        const { params } = context;
+        const id = params.id;
+        console.debug(`Retrieving ${entityName.slice(0, -1)} with ID: ${id}`);
+
+        const existingData = await redis.get(redisKey);
+        const entities = existingData ? JSON.parse(existingData) : [];
+
+        console.debug(`Fetched ${entities.length} ${entityName} from Redis`);
+
+        const index = entities.findIndex((type) => type.id === id);
+        let sentenceCase;
+        if (index === -1) {
+            sentenceCase = toSentenceCase(entityName.slice(0, -1));
+            console.warn(`${sentenceCase} not found for ID: ${id}`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `${toSentenceCase(entityName.slice(0, -1))} not found`
+            );
+        }
+
+        sentenceCase = toSentenceCase(entityName.slice(0, -1));
+        console.debug(
+            `${sentenceCase} retrieved successfully from Redis: ${id}`
+        );
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${sentenceCase} retrieved successfully`,
+            entities[index]
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
     deleteValuesFromRedis,
+    getValueByIdFromRedis,
 };
 
 export default service;

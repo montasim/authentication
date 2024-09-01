@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 
+import service from '@/shared/service';
 import httpStatus from '@/constants/httpStatus.constants';
 import configuration from '@/configuration/configuration';
 
@@ -9,42 +10,12 @@ import sendErrorResponse from '@/utilities/sendErrorResponse';
 const redis = new Redis(configuration.redis.url);
 
 export const GET = async (request, context) => {
-    console.debug('Starting process to retrieve a specific content type');
-
-    try {
-        const { params } = context;
-        const id = params.id;
-        console.debug(`Retrieving content type with ID: ${id}`);
-
-        const existingData = await redis.get('contentTypes');
-        const contentTypes = existingData ? JSON.parse(existingData) : [];
-
-        console.debug(
-            `Fetched ${contentTypes.length} content types from Redis`
-        );
-
-        const index = contentTypes.findIndex((type) => type.id === id);
-        if (index === -1) {
-            console.warn(`Content type not found for ID: ${id}`);
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'Content type not found'
-            );
-        }
-
-        console.debug(`Content type retrieved successfully from Redis: ${id}`);
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Content type retrieved successfully',
-            contentTypes[index]
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.getValueByIdFromRedis(
+        request,
+        context,
+        'contentTypes',
+        'content types'
+    );
 };
 
 export const PUT = async (request, context) => {

@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 
+import service from '@/shared/service';
 import httpStatus from '@/constants/httpStatus.constants';
 import configuration from '@/configuration/configuration';
 
@@ -9,42 +10,12 @@ import sendErrorResponse from '@/utilities/sendErrorResponse';
 const redis = new Redis(configuration.redis.url);
 
 export const GET = async (request, context) => {
-    console.debug('Starting process to retrieve a specific activity type');
-
-    try {
-        const { params } = context;
-        const id = params.id;
-        console.debug(`Retrieving activity type with ID: ${id}`);
-
-        const existingData = await redis.get('activityTypes');
-        const activityTypes = existingData ? JSON.parse(existingData) : [];
-
-        console.debug(
-            `Fetched ${activityTypes.length} activity types from Redis`
-        );
-
-        const index = activityTypes.findIndex((type) => type.id === id);
-        if (index === -1) {
-            console.warn(`Activity type not found for ID: ${id}`);
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'Activity type not found'
-            );
-        }
-
-        console.debug(`Activity type retrieved successfully from Redis: ${id}`);
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Activity type retrieved successfully',
-            activityTypes[index]
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.getValueByIdFromRedis(
+        request,
+        context,
+        'activityTypes',
+        'activity types'
+    );
 };
 
 export const PUT = async (request, context) => {
