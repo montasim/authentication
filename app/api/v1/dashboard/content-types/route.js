@@ -11,9 +11,9 @@ import sendErrorResponse from '@/utilities/sendErrorResponse';
 const redis = new Redis(configuration.redis.url);
 
 export const POST = async (request) => {
-    try {
-        console.debug('Starting content types update process');
+    console.debug('Starting content types update process');
 
+    try {
         const filePath = path.resolve('constants/', 'contentTypes.json');
         console.debug(`Reading content types from file: ${filePath}`);
         const fileData = await fs.readFile(filePath, 'utf8');
@@ -59,11 +59,13 @@ export const POST = async (request) => {
     }
 };
 
-export const GET = async (request, response) => {
+export const GET = async (request) => {
+    console.debug('Starting process to retrieve content types');
+
     try {
-        const data = await redis.get('activityTypes');
-        if (!JSON.parse(data)) {
-            console.error('Invalid JSON data in Redis.');
+        const data = await redis.get('contentTypes');
+        if (!data) {
+            console.error('No content types data found in Redis.');
             return sendResponse(
                 request,
                 false,
@@ -73,14 +75,14 @@ export const GET = async (request, response) => {
             );
         }
 
-        const activityTypes = JSON.parse(data);
-        console.debug('Retrieved activity types from Redis.');
+        const contentTypes = JSON.parse(data);
+        console.debug('Successfully retrieved content types from Redis.');
         return sendResponse(
             request,
             true,
             httpStatus.OK,
-            'Activity types retrieved successfully',
-            activityTypes
+            'Content types retrieved successfully',
+            contentTypes
         );
     } catch (error) {
         return sendErrorResponse(request, error);
@@ -88,16 +90,30 @@ export const GET = async (request, response) => {
 };
 
 export const DELETE = async (request) => {
+    console.debug('Starting process to delete content types');
+
     try {
-        // Remove the 'activityTypes' key from Redis, effectively deleting all activity types
-        await redis.del('activityTypes');
-        console.debug('Deleted all activity types from Redis.');
+        const data = await redis.get('contentTypes');
+        if (!data) {
+            console.error('No content types data found in Redis.');
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                'No data found to delete',
+                {}
+            );
+        }
+
+        // Remove the 'contentTypes' key from Redis, effectively deleting all content types
+        await redis.del('contentTypes');
+        console.debug('Deleted all content types from Redis.');
 
         return sendResponse(
             request,
             true,
             httpStatus.OK,
-            'All activity types deleted successfully'
+            'All content types deleted successfully'
         );
     } catch (error) {
         return sendErrorResponse(request, error);
