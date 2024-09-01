@@ -4,6 +4,7 @@ import NavBar from '@/components/dashboard/NavBar';
 import SideBar from '@/components/dashboard/SideBar';
 import { Card } from '@/components/ui/card';
 import { Toaster } from 'sonner';
+import ProviderContainer from '@/provider/providerContainer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,22 +16,26 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <body className={inter.className}>
-                <div className="w-full h-screen flex flex-col ">
-                    <NavBar />
+            <ProviderContainer>
+                <body className={inter.className}>
+                    <div className="w-full h-screen flex flex-col ">
+                        <NavBar />
 
-                    <div
-                        className={`w-full h-full flex flex-grow overflow-hidden space-x-4 p-4`}
-                    >
-                        <SideBar />
+                        <div
+                            className={`w-full h-full flex flex-grow overflow-hidden space-x-4 p-4`}
+                        >
+                            <SideBar />
 
-                        <Card className="w-full h-full overflow-y-auto">
-                            <div className="w-full h-full px-2">{children}</div>
-                        </Card>
+                            <Card className="w-full h-full overflow-y-auto">
+                                <div className="w-full h-full px-2">
+                                    {children}
+                                </div>
+                            </Card>
+                        </div>
                     </div>
-                </div>
-                <Toaster />
-            </body>
+                    <Toaster />
+                </body>
+            </ProviderContainer>
         </html>
     );
 }
