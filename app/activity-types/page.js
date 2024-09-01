@@ -19,7 +19,7 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
 
-export default function Patterns() {
+export default function ActivityTypes() {
     const [activityTypes, setActivityTypes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
