@@ -43,13 +43,13 @@ export default function SideBar() {
                     </p>
                 </Link>
 
-                <Link href="/default">
+                <Link href="/default/gender-images">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
                             <IoMdSettings />
                         </span>
 
-                        <span className="">Default</span>
+                        <span className="">Default Gender Image</span>
                     </p>
                 </Link>
 
