@@ -5,15 +5,21 @@
  * This modular approach to schema management facilitates reusability, maintains consistency across different parts of the application, and simplifies the maintenance of the database model.
  */
 
+import Redis from 'ioredis';
 import { Schema } from 'mongoose';
 
 import constants from '@/constants/constants.js';
 import usersConstants from '@/app/api/v1/(users)/users.constants.js';
-import activityTypeValues from '@/constants/activityTypes.json';
+import configuration from '@/configuration/configuration';
 
 import getPatternByName from '@/utilities/getPatternByName';
 
-const activityTypes = activityTypeValues.map((type) => type.value);
+const redis = new Redis(configuration.redis.url);
+
+const getActivityTypeValues = async () => {
+    const activityTypes = JSON.parse(await redis.get('activityTypes'));
+    return activityTypes.map((type) => type.value);
+};
 
 /**
  * @schema usernameSchema
@@ -767,43 +773,49 @@ const sessionsSchema = new Schema({
  * @schema activitiesSchema
  * Captures (users) activities within the application, detailing the type of action, associated metadata, and the exact time it occurred, facilitating audits and behavior analysis.
  */
-const activitiesSchema = new Schema({
-    category: {
-        type: String,
-        enum: activityTypes,
-        description:
-            'Describes the category of activity performed by the (users), such as security, appearance.',
-    },
-    action: {
-        type: String,
-        required: [
-            true,
-            'Recording the type of action is necessary to track (users) activities accurately.',
-        ],
-        description:
-            'Describes the type of activity performed by the (users), such as login, logout, data entry, etc.',
-    },
-    details: {
-        type: String,
-        required: [
-            true,
-            'Action details is necessary to track (users) activities accurately.',
-        ],
-        description:
-            'Details activity performed by the (users), such as login, logout, data entry, etc.',
-    },
-    date: {
-        type: Date,
-        default: Date.now,
-        description:
-            'The exact date and time when the activity occurred. Automatically set to the current date and time by default.',
-    },
-    metadata: {
-        type: Schema.Types.Mixed,
-        description:
-            'Additional details associated with the activity, stored in a flexible schema-less format. This can include specifics like IP address, device used, location, or other context-specific data.',
-    },
-});
+const activitiesSchema = async () => {
+    const activityTypeValues = await getActivityTypeValues();
+    console.debug('activityTypeValues', activityTypeValues);
+
+    // Export the schema
+    return new Schema({
+        category: {
+            type: String,
+            enum: activityTypeValues,
+            description:
+                'Describes the category of activity performed by the (users), such as security, appearance.',
+        },
+        action: {
+            type: String,
+            required: [
+                true,
+                'Recording the type of action is necessary to track (users) activities accurately.',
+            ],
+            description:
+                'Describes the type of activity performed by the (users), such as login, logout, data entry, etc.',
+        },
+        details: {
+            type: String,
+            required: [
+                true,
+                'Action details is necessary to track (users) activities accurately.',
+            ],
+            description:
+                'Details activity performed by the (users), such as login, logout, data entry, etc.',
+        },
+        date: {
+            type: Date,
+            default: Date.now,
+            description:
+                'The exact date and time when the activity occurred. Automatically set to the current date and time by default.',
+        },
+        metadata: {
+            type: Schema.Types.Mixed,
+            description:
+                'Additional details associated with the activity, stored in a flexible schema-less format. This can include specifics like IP address, device used, location, or other context-specific data.',
+        },
+    });
+};
 
 /**
  * @schema appearanceSchema
