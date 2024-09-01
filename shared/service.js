@@ -95,9 +95,41 @@ const getValuesFromRedis = async (request, redisKey, entityName) => {
     }
 };
 
+const deleteValuesFromRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting process to delete ${entityName}`);
+
+    try {
+        const data = await redis.get(redisKey);
+        if (!data) {
+            console.error(`No ${entityName} data found in Redis.`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} data found to delete`,
+                {}
+            );
+        }
+
+        // Remove the key from Redis, effectively deleting all data under that key
+        await redis.del(redisKey);
+        console.debug(`Deleted all ${entityName} from Redis.`);
+
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `All ${entityName} deleted successfully`
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
+    deleteValuesFromRedis,
 };
 
 export default service;
