@@ -40,13 +40,6 @@ const lengths = Object.freeze({
     HEX_COLOR_CODE_MAX: 7,
 });
 
-const urls = Object.freeze({
-    FACEBOOK: 'https://www.facebook.com',
-    TWITTER: 'https://twitter.com',
-    LINKEDIN: 'https://linkedin.com',
-    GITHUB: 'https://github.com',
-});
-
 /**
  * Provides a structured and centralized collection of various constants needed for input validation,
  * configuration of external links, and other hardcoded values that are used across the application.

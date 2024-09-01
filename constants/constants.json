@@ -1,0 +1,86 @@
+[
+  {
+    "id": "constant-website-url-max",
+    "name": "WEBSITE_URL_MAX",
+    "value": 50,
+    "description": "/**\n * Represents the maximum length allowed for a website URL.\n *\n * This limit ensures that the URL entries remain manageable and compatible with database and UI constraints.\n */"
+  },
+  {
+    "id": "constant-username-min",
+    "name": "USERNAME_MIN",
+    "value": 3,
+    "description": "/**\n * Represents the minimum length allowed for a username.\n *\n * This limit helps ensure that usernames are meaningful and provide enough characters for identification.\n */"
+  },
+  {
+    "id": "constant-username-max",
+    "name": "USERNAME_MAX",
+    "value": 10,
+    "description": "/**\n * Represents the maximum length allowed for a username.\n *\n * This limit helps ensure that usernames are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "constant-email-min",
+    "name": "EMAIL_MIN",
+    "value": 5,
+    "description": "/**\n * Represents the minimum length allowed for an email address.\n *\n * This limit is set to ensure the basic structure of an email address is met, allowing for validation of email inputs.\n */"
+  },
+  {
+    "id": "constant-email-max",
+    "name": "EMAIL_MAX",
+    "value": 100,
+    "description": "/**\n * Represents the maximum length allowed for an email address.\n *\n * This limit ensures that email addresses are compatible with database and email service constraints while being long enough to accommodate most email formats.\n */"
+  },
+  {
+    "id": "constant-mobile-min",
+    "name": "MOBILE_MIN",
+    "value": 11,
+    "description": "/**\n * Represents the minimum length allowed for a mobile number.\n *\n * This limit is typically set to accommodate the country code plus the standard number length in most regions.\n */"
+  },
+  {
+    "id": "constant-mobile-max",
+    "name": "MOBILE_MAX",
+    "value": 14,
+    "description": "/**\n * Represents the maximum length allowed for a mobile number.\n *\n * This limit allows for international numbers which may include country codes and additional digits.\n */"
+  },
+  {
+    "id": "constant-password-min",
+    "name": "PASSWORD_MIN",
+    "value": 8,
+    "description": "/**\n * Represents the minimum length allowed for a password.\n *\n * This limit helps ensure that passwords are strong enough to provide security against unauthorized access.\n */"
+  },
+  {
+    "id": "constant-password-max",
+    "name": "PASSWORD_MAX",
+    "value": 30,
+    "description": "/**\n * Represents the maximum length allowed for a password.\n *\n * This limit is set to balance between security and usability, ensuring passwords are not too cumbersome for users while providing adequate security.\n */"
+  },
+  {
+    "id": "constant-external-auth-id-max",
+    "name": "EXTERNAL_AUTH_ID_MAX",
+    "value": 100,
+    "description": "/**\n * Represents the maximum length allowed for an external authentication ID.\n *\n * This limit ensures compatibility with various external authentication services and database constraints.\n */"
+  },
+  {
+    "id": "constant-image-file-id-max",
+    "name": "IMAGE_FILE_ID_MAX",
+    "value": 100,
+    "description": "/**\n * Represents the maximum length allowed for an image file ID.\n *\n * This limit ensures compatibility with storage systems and helps maintain efficient database indexing.\n */"
+  },
+  {
+    "id": "constant-image-shareable-link",
+    "name": "IMAGE_SHAREABLE_LINK",
+    "value": 500,
+    "description": "/**\n * Represents the maximum length allowed for a shareable link of an image.\n *\n * This limit accommodates potentially long URLs that may include tracking and routing information.\n */"
+  },
+  {
+    "id": "constant-image-download-link",
+    "name": "IMAGE_DOWNLOAD_LINK",
+    "value": 500,
+    "description": "/**\n * Represents the maximum length allowed for a download link of an image.\n *\n * This limit allows for the inclusion of necessary query parameters and other URL modifications.\n */"
+  },
+  {
+    "id": "constant-hex-color-code-max",
+    "name": "HEX_COLOR_CODE_MAX",
+    "value": 7,
+    "description": "/**\n * Represents the maximum length allowed for a hexadecimal color code.\n *\n * This includes the '#' symbol followed by six characters representing the color in RGB format.\n */"
+  }
+]
