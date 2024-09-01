@@ -23,15 +23,6 @@ export const PUT = async (request, context) => {
     );
 };
 
-export const PATCH = async (request, context) => {
-    return service.updateValueByIdInRedis(
-        request,
-        context,
-        'activityTypes',
-        'activity types'
-    );
-};
-
 export const DELETE = async (request, context) => {
     return service.deleteValueByIdFromRedis(
         request,

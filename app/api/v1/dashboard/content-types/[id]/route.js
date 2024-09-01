@@ -14,7 +14,7 @@ export const GET = async (request, context) => {
     );
 };
 
-export const PATCH = async (request, context) => {
+export const PUT = async (request, context) => {
     return service.updateValueByIdInRedis(
         request,
         context,
