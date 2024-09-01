@@ -229,12 +229,51 @@ const updateValueByIdInRedis = async (
     }
 };
 
+const deleteValueByIdFromRedis = async (
+    request,
+    context,
+    redisKey,
+    entityName
+) => {
+    console.debug(
+        `Starting process to delete a specific ${entityName.slice(0, -1)}`
+    );
+
+    try {
+        const { params } = context;
+        const id = params.id;
+        console.debug(`Deleting ${entityName.slice(0, -1)} with ID: ${id}`);
+
+        const existingData = await redis.get(redisKey);
+        let entities = existingData ? JSON.parse(existingData) : [];
+        const originalCount = entities.length;
+
+        entities = entities.filter((entity) => entity.id !== id);
+
+        await redis.set(redisKey, JSON.stringify(entities));
+        console.debug(
+            `Deleted ${entityName.slice(0, -1)} from Redis: ${id}, affected count: ${originalCount - entities.length}`
+        );
+
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${toSentenceCase(entityName.slice(0, -1))} deleted successfully`,
+            entities
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
     deleteValuesFromRedis,
     getValueByIdFromRedis,
     updateValueByIdInRedis,
+    deleteValueByIdFromRedis,
 };
 
 export default service;
