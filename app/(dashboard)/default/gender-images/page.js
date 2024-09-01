@@ -111,7 +111,7 @@ export default function DefaultGenderImages() {
                     </TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableCell className="font-medium">Name</TableCell>
+                            <TableCell className="font-medium">Key</TableCell>
                             <TableCell>Value</TableCell>
                             <TableCell className="text-right">Action</TableCell>
                         </TableRow>
