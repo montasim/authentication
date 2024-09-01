@@ -1,24 +1,24 @@
 [
   {
-    "id": "1a2b3c4d-5e6f-7g8h-9i0j-klmnopqrstuv",
+    "id": "default-url-9i0j-klmnopqrstuv",
     "name": "FACEBOOK",
     "value": "https://www.facebook.com",
     "description": "/**\n * Represents the URL for Facebook.\n *\n * This URL is used to link to the Facebook platform, typically for social media integration or linking user profiles to their Facebook accounts.\n */"
   },
   {
-    "id": "2b3c4d5e-6f7g-8h9i-0j1k-lmnopqrstuvw",
+    "id": "default-url-8h9i-0j1k-lmnopqrstuvw",
     "name": "TWITTER",
     "value": "https://twitter.com",
     "description": "/**\n * Represents the URL for Twitter.\n *\n * This URL is used to link to the Twitter platform, typically for social media integration or linking user profiles to their Twitter accounts.\n */"
   },
   {
-    "id": "3c4d5e6f-7g8h-9i0j-1k2l-mnopqrstuvwx",
+    "id": "default-url-9i0j-1k2l-mnopqrstuvwx",
     "name": "LINKEDIN",
     "value": "https://linkedin.com",
     "description": "/**\n * Represents the URL for LinkedIn.\n *\n * This URL is used to link to the LinkedIn platform, typically for professional networking, social media integration, or linking user profiles to their LinkedIn accounts.\n */"
   },
   {
-    "id": "4d5e6f7g-8h9i-0j1k-2l3m-nopqrstuvwxy",
+    "id": "default-url-0j1k-2l3m-nopqrstuvwxy",
     "name": "GITHUB",
     "value": "https://github.com",
     "description": "/**\n * Represents the URL for GitHub.\n *\n * This URL is used to link to the GitHub platform, typically for accessing repositories, contributing to projects, or linking user profiles to their GitHub accounts.\n */"

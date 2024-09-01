@@ -10,7 +10,7 @@ import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 export const POST = async (request) => {
     const { id, value } = await request.json();
 
-    const filePath = path.join(process.cwd(), 'constants/urls.json');
+    const filePath = path.join(process.cwd(), 'constants/defaultUrls.json');
 
     try {
         // Read the existing JSON file

@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { GoCheck, GoEye, GoInfo, GoPencil, GoX } from 'react-icons/go';
 
-import urlConstants from '@/constants/urls.json';
+import urlConstants from '@/constants/defaultUrls.json';
 import { Textarea } from '@/components/ui/textarea';
 
 const renderRows = (

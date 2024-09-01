@@ -53,13 +53,13 @@ export default function SideBar() {
                     </p>
                 </Link>
 
-                <Link href="/manage-urls">
+                <Link href="/default/urls">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
                             <IoLinkSharp />
                         </span>
 
-                        <span className="">Manage URLs</span>
+                        <span className="">Default URLs</span>
                     </p>
                 </Link>
 
