@@ -19,51 +19,12 @@ export const GET = async (request, context) => {
 };
 
 export const PUT = async (request, context) => {
-    console.debug('Starting process to update a specific content type');
-
-    try {
-        const { params } = context;
-        const id = params.id;
-        console.debug(`Updating content type with ID: ${id}`);
-
-        const { value, name, description } = await request.json();
-
-        const existingData = await redis.get('contentTypes');
-        const contentTypes = existingData ? JSON.parse(existingData) : [];
-
-        console.debug(
-            `Fetched ${contentTypes.length} content types from Redis`
-        );
-
-        const index = contentTypes.findIndex((type) => type.id === id);
-        if (index === -1) {
-            console.warn(`Content type not found for ID: ${id}`);
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'Content type not found'
-            );
-        }
-
-        if (name !== undefined) contentTypes[index].name = name;
-        if (value !== undefined) contentTypes[index].value = value;
-        if (description !== undefined)
-            contentTypes[index].description = description;
-
-        await redis.set('contentTypes', JSON.stringify(contentTypes));
-        console.debug(`Content type updated successfully in Redis: ${id}`);
-
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Content type updated successfully',
-            contentTypes[index]
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.updateValueByIdInRedis(
+        request,
+        context,
+        'contentTypes',
+        'content types'
+    );
 };
 
 export const DELETE = async (request, context) => {

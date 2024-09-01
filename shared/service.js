@@ -173,11 +173,68 @@ const getValueByIdFromRedis = async (
     }
 };
 
+const updateValueByIdInRedis = async (
+    request,
+    context,
+    redisKey,
+    entityName
+) => {
+    console.debug(
+        `Starting process to update a specific ${entityName.slice(0, -1)}`
+    );
+
+    try {
+        const { params } = context;
+        const id = params.id;
+        console.debug(`Updating ${entityName.slice(0, -1)} with ID: ${id}`);
+
+        const { value, name, description } = await request.json();
+
+        const existingData = await redis.get(redisKey);
+        const entities = existingData ? JSON.parse(existingData) : [];
+
+        console.debug(`Fetched ${entities.length} ${entityName} from Redis`);
+
+        const index = entities.findIndex((entity) => entity.id === id);
+        let sentenceCase;
+        if (index === -1) {
+            sentenceCase = toSentenceCase(entityName.slice(0, -1));
+            console.warn(`${entityName.slice(0, -1)} not found for ID: ${id}`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `${sentenceCase} not found`
+            );
+        }
+
+        if (name !== undefined) entities[index].name = name;
+        if (value !== undefined) entities[index].value = value;
+        if (description !== undefined)
+            entities[index].description = description;
+
+        await redis.set(redisKey, JSON.stringify(entities));
+        sentenceCase = toSentenceCase(entityName.slice(0, -1));
+        console.debug(`${sentenceCase} updated successfully in Redis: ${id}`);
+
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${sentenceCase} updated successfully`,
+            entities[index]
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
     deleteValuesFromRedis,
     getValueByIdFromRedis,
+    updateValueByIdInRedis,
 };
 
 export default service;

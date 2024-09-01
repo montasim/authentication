@@ -19,51 +19,12 @@ export const GET = async (request, context) => {
 };
 
 export const PUT = async (request, context) => {
-    console.debug('Starting process to update a specific activity type');
-
-    try {
-        const { params } = context;
-        const id = params.id;
-        console.debug(`Updating activity type with ID: ${id}`);
-
-        const { value, name, description } = await request.json();
-
-        const existingData = await redis.get('activityTypes');
-        const activityTypes = existingData ? JSON.parse(existingData) : [];
-
-        console.debug(
-            `Fetched ${activityTypes.length} activity types from Redis`
-        );
-
-        const index = activityTypes.findIndex((type) => type.id === id);
-        if (index === -1) {
-            console.warn(`Activity type not found for ID: ${id}`);
-            return sendResponse(
-                request,
-                false,
-                httpStatus.NOT_FOUND,
-                'Activity type not found'
-            );
-        }
-
-        if (name !== undefined) activityTypes[index].name = name;
-        if (value !== undefined) activityTypes[index].value = value;
-        if (description !== undefined)
-            activityTypes[index].description = description;
-
-        await redis.set('activityTypes', JSON.stringify(activityTypes));
-        console.debug(`Activity type updated successfully in Redis: ${id}`);
-
-        return sendResponse(
-            request,
-            true,
-            httpStatus.OK,
-            'Activity type updated successfully',
-            activityTypes[index]
-        );
-    } catch (error) {
-        return sendErrorResponse(request, error);
-    }
+    return service.updateValueByIdInRedis(
+        request,
+        context,
+        'activityTypes',
+        'activity types'
+    );
 };
 
 export const DELETE = async (request, context) => {
