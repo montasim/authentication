@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 export default function Dashboard() {
     // State to hold the fetched data
     const [uses, setUsers] = useState([]);
-    // State to handle loading and error states
+    // State to handle spinner and error states
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -21,7 +21,7 @@ export default function Dashboard() {
                 toast.success('Data fetched successfully.');
             } catch (err) {
                 setError(err.message); // Handle errors
-                setIsLoading(false); // Set loading to false if an error occurs
+                setIsLoading(false); // Set spinner to false if an error occurs
             }
         };
 

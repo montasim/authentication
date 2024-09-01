@@ -3,15 +3,20 @@ import Link from 'next/link';
 
 import { HiOutlineHome } from 'react-icons/hi';
 import { Card } from '@/components/ui/card';
+import { MdEmail, MdPassword, MdSpaceDashboard } from 'react-icons/md';
+import { LuActivitySquare } from 'react-icons/lu';
+import { PiDeviceTabletFill } from 'react-icons/pi';
+import { IoLinkSharp } from 'react-icons/io5';
+import { IoMdSettings } from 'react-icons/io';
 
 export default function SideBar() {
     return (
-        <aside className="h-full py-4">
+        <aside className="h-full">
             <Card className="w-60 h-full p-4">
                 <Link href="/dashboard">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <MdSpaceDashboard />
                         </span>
 
                         <span className="">Dashboard</span>
@@ -41,7 +46,7 @@ export default function SideBar() {
                 <Link href="/default">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <IoMdSettings />
                         </span>
 
                         <span className="">Default</span>
@@ -51,7 +56,7 @@ export default function SideBar() {
                 <Link href="/manage-urls">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <IoLinkSharp />
                         </span>
 
                         <span className="">Manage URLs</span>
@@ -61,7 +66,7 @@ export default function SideBar() {
                 <Link href="/environments">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <PiDeviceTabletFill />
                         </span>
 
                         <span className="">Environments</span>
@@ -81,7 +86,7 @@ export default function SideBar() {
                 <Link href="/activity-types">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <LuActivitySquare />
                         </span>
 
                         <span className="">Activity Types</span>
@@ -91,7 +96,7 @@ export default function SideBar() {
                 <Link href="/temporary-emails">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <MdEmail />
                         </span>
 
                         <span className="">Temporary Emails</span>
@@ -101,7 +106,7 @@ export default function SideBar() {
                 <Link href="/blocked-emails">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <MdEmail />
                         </span>
 
                         <span className="">Blocked Emails</span>
@@ -111,7 +116,7 @@ export default function SideBar() {
                 <Link href="/common-passwords">
                     <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                         <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
+                            <MdPassword />
                         </span>
 
                         <span className="">Common Passwords</span>

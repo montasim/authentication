@@ -1,7 +1,7 @@
 /**
  * @fileoverview This file exports an asynchronous function `loadListFromFile` which loads
  * a list from a specified text file and returns it as a Set. The function handles the
- * loading of various types of lists such as blocked email domains, common passwords,
+ * spinner of various types of lists such as blocked email domains, common passwords,
  * or temporary email domains from specified files. It ensures robust error handling
  * and logs errors using a logger service.
  */

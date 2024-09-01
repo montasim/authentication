@@ -11,47 +11,179 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GoCheck, GoEye, GoInfo, GoPencil, GoX } from 'react-icons/go';
+import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
+import { GoCheck, GoPencil, GoX } from 'react-icons/go';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { deleteData, getData, createData, updateData } from '@/utilities/axios';
+import Spinner from '@/components/spinner/Spinner';
 
-import activityTypesConstants from '@/constants/activityTypes.json';
-import { Textarea } from '@/components/ui/textarea';
+export default function Patterns() {
+    const [activityTypes, setActivityTypes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [editingState, setEditingState] = useState({});
 
-const renderRows = (
+    const fetchApiData = async () => {
+        try {
+            setLoading(true);
+
+            const data = await getData('/api/v1/dashboard/activity-types');
+
+            setActivityTypes(data);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchApiData();
+    }, []);
+
+    const handleEditClick = (id, value) => {
+        setEditingState({
+            ...editingState,
+            [id]: { isEditing: true, value },
+        });
+    };
+
+    const handleDeleteClick = async (id) => {
+        await deleteData('/api/v1/dashboard/activity-types/', id);
+
+        await fetchApiData();
+    };
+
+    const handleSaveClick = async (id) => {
+        const newValue = editingState[id].value;
+        const newName = editingState[id].name; // Assuming you also manage names
+        const newDescription = editingState[id].description; // Assuming descriptions are also editable
+
+        await updateData(`/api/v1/dashboard/activity-types/${id}`, {
+            value: newValue,
+            name: newName,
+            description: newDescription,
+        });
+
+        await fetchApiData();
+    };
+
+    const handleResetToDefaultClick = async () => {
+        await createData(`/api/v1/dashboard/activity-types`, {});
+
+        await fetchApiData();
+    };
+
+    const handleDeleteAllClick = async () => {
+        await deleteData(`/api/v1/dashboard/activity-types`, '');
+
+        setActivityTypes([]);
+
+        await fetchApiData();
+    };
+
+    const handleCancelClick = (id) => {
+        setEditingState({
+            ...editingState,
+            [id]: { isEditing: false },
+        });
+    };
+
+    const handleInputChange = (id, newValue) => {
+        setEditingState({
+            ...editingState,
+            [id]: { ...editingState[id], value: newValue },
+        });
+    };
+
+    return loading ? (
+        <Spinner />
+    ) : (
+        <div>
+            {activityTypes ? (
+                <Table>
+                    <TableCaption>
+                        {activityTypes.length
+                            ? 'A list of your used activity types variables.'
+                            : 'No activity types data found.'}
+                    </TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableCell className="font-medium">Name</TableCell>
+                            <TableCell>Value</TableCell>
+                            <TableCell className="text-right">Action</TableCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <RenderRows
+                            activityTypes={activityTypes}
+                            editingState={editingState}
+                            handleEditClick={handleEditClick}
+                            handleDeleteClick={handleDeleteClick}
+                            handleSaveClick={handleSaveClick}
+                            handleCancelClick={handleCancelClick}
+                            handleInputChange={handleInputChange}
+                        />
+                    </TableBody>
+                </Table>
+            ) : (
+                <p>No data </p>
+            )}
+
+            <div className="flex items-center gap-4">
+                <Button
+                    size="xs"
+                    className="text-xs p-1.5 px-2"
+                    onClick={() => handleResetToDefaultClick()}
+                >
+                    Reset to default
+                </Button>
+
+                <Button
+                    variant="destructive"
+                    size="xs"
+                    className="text-xs p-1.5 px-2"
+                    onClick={() => handleDeleteAllClick()}
+                >
+                    Delete All
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+const RenderRows = ({
     activityTypes,
     editingState,
     handleEditClick,
+    handleDeleteClick,
     handleSaveClick,
     handleCancelClick,
-    handleInputChange
-) => {
+    handleInputChange,
+}) => {
     return activityTypes.map((activity) => (
         <TableRow key={activity.id}>
             <TableCell className="font-medium">{activity.name}</TableCell>
             <TableCell>
-                <Input
-                    className={
-                        !editingState[activity.id] ? 'pointer-events-none' : ''
-                    }
-                    type="text"
-                    value={editingState[activity.id]?.value || activity.value}
-                    onChange={(e) =>
-                        handleInputChange(activity.id, e.target.value)
-                    }
-                    readOnly={!editingState[activity.id]?.isEditing}
-                />
+                {editingState[activity.id]?.isEditing ? (
+                    <Input
+                        className={
+                            !editingState[activity.id]
+                                ? 'pointer-events-none'
+                                : ''
+                        }
+                        type="text"
+                        value={
+                            editingState[activity.id]?.value || activity.value
+                        }
+                        onChange={(e) =>
+                            handleInputChange(activity.id, e.target.value)
+                        }
+                        readOnly={!editingState[activity.id]?.isEditing}
+                    />
+                ) : (
+                    <p>{activity.value}</p>
+                )}
             </TableCell>
             <TableCell className="text-right">
                 {editingState[activity.id]?.isEditing ? (
@@ -70,134 +202,27 @@ const renderRows = (
                         </Button>
                     </>
                 ) : (
-                    <>
-                        <AlertDialog>
-                            <AlertDialogTrigger>
-                                <GoInfo />
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                        Are you absolutely sure?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        <Textarea
-                                            className="resize-y h-96"
-                                            placeholder={
-                                                editingState[activity.id]
-                                                    ?.description ||
-                                                activity.description
-                                            }
-                                        />
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                        Cancel
-                                    </AlertDialogCancel>
-                                    {/*<AlertDialogAction>Continue</AlertDialogAction>*/}
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                    <div className="flex items-center justify-evenly">
+                        <RenderDialog
+                            activity={activity}
+                            editingState={editingState}
+                            title="Are you absolutely sure?"
+                        />
 
                         <GoPencil
-                            className="cursor-pointer"
+                            className="cursor-pointer text-blue-500"
                             onClick={() =>
                                 handleEditClick(activity.id, activity.value)
                             }
                         />
-                    </>
+
+                        <AiOutlineDelete
+                            className="cursor-pointer text-destructive"
+                            onClick={() => handleDeleteClick(activity.id)}
+                        />
+                    </div>
                 )}
             </TableCell>
         </TableRow>
     ));
 };
-
-export default function Patterns() {
-    const [activityTypes, setActivityTypes] = useState([]);
-    const [editingState, setEditingState] = useState({});
-
-    useEffect(() => {
-        setActivityTypes(activityTypesConstants);
-    }, []);
-
-    const handleEditClick = (id, value) => {
-        setEditingState({
-            ...editingState,
-            [id]: { isEditing: true, value },
-        });
-    };
-
-    const handleSaveClick = async (id) => {
-        const newValue = editingState[id].value;
-
-        try {
-            const response = await fetch('/api/v1/dashboard/activity-types', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id, value: newValue }),
-            });
-
-            if (response.ok) {
-                setActivityTypes((prevActivityTypes) =>
-                    prevActivityTypes.map((activity) =>
-                        activity.id === id
-                            ? { ...activity, value: newValue }
-                            : activity
-                    )
-                );
-                setEditingState({
-                    ...editingState,
-                    [id]: { isEditing: false },
-                });
-            } else {
-                console.error('Failed to update activity.');
-            }
-        } catch (error) {
-            console.error('Failed to update activity:', error);
-        }
-    };
-
-    const handleCancelClick = (id) => {
-        setEditingState({
-            ...editingState,
-            [id]: { isEditing: false },
-        });
-    };
-
-    const handleInputChange = (id, newValue) => {
-        setEditingState({
-            ...editingState,
-            [id]: { ...editingState[id], value: newValue },
-        });
-    };
-
-    return (
-        <div>
-            <Table>
-                <TableCaption>
-                    A list of your used activity types variables.
-                </TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableCell className="font-medium">Name</TableCell>
-                        <TableCell>Value</TableCell>
-                        <TableCell className="text-right">Edit</TableCell>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {renderRows(
-                        activityTypes,
-                        editingState,
-                        handleEditClick,
-                        handleSaveClick,
-                        handleCancelClick,
-                        handleInputChange
-                    )}
-                </TableBody>
-            </Table>
-        </div>
-    );
-}

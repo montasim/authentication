@@ -8,6 +8,9 @@ const configuration = {
     mongoose: {
         url: process.env.NEXT_PUBLIC_MONGODB_URL,
     },
+    redis: {
+        url: process.env.NEXT_PUBLIC_REDIS_URL,
+    },
     jwt: {
         secret: process.env.NEXT_PUBLIC_JWT_SECRET,
         accessExpirationMinutes:

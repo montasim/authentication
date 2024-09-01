@@ -1,24 +1,24 @@
 [
   {
-    "id": "6f7g8h9i-0j1k-2l3m-4n5o-pqrstuvwxyza",
+    "id": "activity-type-pqrstuvwxyza",
     "name": "APPEARANCE",
     "value": "appearance",
     "description": "/**\n * Represents the appearance-related activity type.\n *\n * This activity type is used for actions related to changing the appearance settings of the application.\n * It may include changing themes, colors, layouts, or other UI-related settings that affect the look and feel of the application.\n */"
   },
   {
-    "id": "7g8h9i0j-1k2l-3m4n-5o6p-qrsuvwxyzab",
+    "id": "activity-type-qrsuvwxyzab",
     "name": "PROFILE",
     "value": "profile",
     "description": "/**\n * Represents the profile-related activity type.\n *\n * This activity type is used for actions related to updating user profile information. This can include changes to the user's\n * name, contact information, profile picture, and other personal details associated with the user's account.\n */"
   },
   {
-    "id": "8h9i0j1k-2l3m-4n5o-6p7q-rstuvwxyzac",
+    "id": "activity-type-rstuvwxyzac",
     "name": "ACCOUNT",
     "value": "account",
     "description": "/**\n * Represents the account-related activity type.\n *\n * This activity type is used for actions related to account management, such as changing account settings, managing subscriptions,\n * or updating account preferences. It is a broad category encompassing all actions that affect the user's overall account.\n */"
   },
   {
-    "id": "9i0j1k2l-3m4n-5o6p-7q8r-stuvwxyzad",
+    "id": "activity-type-stuvwxyzad",
     "name": "SECURITY",
     "value": "security",
     "description": "/**\n * Represents the security-related activity type.\n *\n * This activity type is used for actions related to enhancing or managing the security of the user's account. This includes\n * changing passwords, setting up two-factor authentication, updating security questions, and monitoring login activities.\n */"

@@ -16,15 +16,17 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body className={inter.className}>
-                <div className="w-full h-screen flex flex-col">
+                <div className="w-full h-screen flex flex-col ">
                     <NavBar />
 
-                    <div className={`flex flex-grow overflow-hidden`}>
+                    <div
+                        className={`w-full h-full flex flex-grow overflow-hidden space-x-4 p-4`}
+                    >
                         <SideBar />
 
-                        <div className="p-4 w-full h-full overflow-y-auto">
-                            <Card>{children}</Card>
-                        </div>
+                        <Card className="w-full h-full overflow-y-auto">
+                            <div className="w-full h-full px-2">{children}</div>
+                        </Card>
                     </div>
                 </div>
                 <Toaster />

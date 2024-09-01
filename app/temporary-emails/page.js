@@ -17,7 +17,7 @@ export default function TemporaryEmailDomainsEditor() {
                 const data = await response.json();
                 setTemporaryEmailDomains(data.data);
             } catch (error) {
-                console.error('Error loading the file:', error);
+                console.error('Error spinner the file:', error);
             } finally {
                 setLoading(false);
             }
