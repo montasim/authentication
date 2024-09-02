@@ -13,6 +13,7 @@ import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
 import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the password reset request process by generating a verification token and sending a password reset email.

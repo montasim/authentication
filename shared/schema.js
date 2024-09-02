@@ -773,49 +773,42 @@ const sessionsSchema = new Schema({
  * @schema activitiesSchema
  * Captures (users) activities within the application, detailing the type of action, associated metadata, and the exact time it occurred, facilitating audits and behavior analysis.
  */
-const activitiesSchema = async () => {
-    const activityTypeValues = await getActivityTypeValues();
-    console.debug('activityTypeValues', activityTypeValues);
-
-    // Export the schema
-    return new Schema({
-        category: {
-            type: String,
-            enum: activityTypeValues,
-            description:
-                'Describes the category of activity performed by the (users), such as security, appearance.',
-        },
-        action: {
-            type: String,
-            required: [
-                true,
-                'Recording the type of action is necessary to track (users) activities accurately.',
-            ],
-            description:
-                'Describes the type of activity performed by the (users), such as login, logout, data entry, etc.',
-        },
-        details: {
-            type: String,
-            required: [
-                true,
-                'Action details is necessary to track (users) activities accurately.',
-            ],
-            description:
-                'Details activity performed by the (users), such as login, logout, data entry, etc.',
-        },
-        date: {
-            type: Date,
-            default: Date.now,
-            description:
-                'The exact date and time when the activity occurred. Automatically set to the current date and time by default.',
-        },
-        metadata: {
-            type: Schema.Types.Mixed,
-            description:
-                'Additional details associated with the activity, stored in a flexible schema-less format. This can include specifics like IP address, device used, location, or other context-specific data.',
-        },
-    });
-};
+const activitiesSchema = new Schema({
+    category: {
+        type: String,
+        description:
+            'Describes the category of activity performed by the (users), such as security, appearance.',
+    },
+    action: {
+        type: String,
+        required: [
+            true,
+            'Recording the type of action is necessary to track (users) activities accurately.',
+        ],
+        description:
+            'Describes the type of activity performed by the (users), such as login, logout, data entry, etc.',
+    },
+    details: {
+        type: String,
+        required: [
+            true,
+            'Action details is necessary to track (users) activities accurately.',
+        ],
+        description:
+            'Details activity performed by the (users), such as login, logout, data entry, etc.',
+    },
+    date: {
+        type: Date,
+        default: Date.now,
+        description:
+            'The exact date and time when the activity occurred. Automatically set to the current date and time by default.',
+    },
+    metadata: {
+        type: Schema.Types.Mixed,
+        description:
+            'Additional details associated with the activity, stored in a flexible schema-less format. This can include specifics like IP address, device used, location, or other context-specific data.',
+    },
+});
 
 /**
  * @schema appearanceSchema
