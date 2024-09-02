@@ -55,7 +55,6 @@ const lengths = Object.freeze({
  */
 const constants = Object.freeze({
     lengths,
-    urls,
 });
 
 export default constants;
