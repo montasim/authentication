@@ -1,36 +1,31 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import {
     Table,
     TableBody,
     TableCaption,
     TableCell,
-    TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GoCheck, GoPencil, GoX } from 'react-icons/go';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
-import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
+import RenderRows from '@/components/dashboard/RenderRows';
+import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
 export default function ContentTypes() {
-    const [contentTypes, setContentTypes] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
         try {
-            setLoading(true);
-
             const data = await getData('/api/v1/dashboard/content-types');
 
-            setContentTypes(data);
+            setData(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -38,6 +33,8 @@ export default function ContentTypes() {
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
@@ -49,9 +46,32 @@ export default function ContentTypes() {
     };
 
     const handleDeleteClick = async (id) => {
-        await deleteData('/api/v1/dashboard/content-types/', id);
+        const deletePromise = deleteData(
+            '/api/v1/dashboard/content-types/',
+            id
+        );
 
-        await fetchApiData();
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleSaveClick = async (id) => {
@@ -59,27 +79,98 @@ export default function ContentTypes() {
         const newName = editingState[id].name; // Assuming you also manage names
         const newDescription = editingState[id].description; // Assuming descriptions are also editable
 
-        await updateData(`/api/v1/dashboard/content-types/${id}`, {
-            value: newValue,
-            name: newName,
-            description: newDescription,
+        const savePromise = updateData(
+            `/api/v1/dashboard/content-types/${id}`,
+            {
+                value: newValue,
+                name: newName,
+                description: newDescription,
+            }
+        );
+
+        toast.promise(savePromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while saving the item.',
         });
 
-        await fetchApiData();
+        try {
+            const result = await savePromise;
+            if (result.success) {
+                await fetchApiData();
+
+                setEditingState({});
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleResetToDefaultClick = async () => {
-        await createData(`/api/v1/dashboard/content-types`, {});
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/content-types`,
+            {}
+        );
 
-        await fetchApiData();
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/content-types`, '');
+        const deletedPromise = deleteData(
+            `/api/v1/dashboard/content-types`,
+            ''
+        );
 
-        setContentTypes([]);
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
 
-        await fetchApiData();
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setData([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleCancelClick = (id) => {
@@ -100,10 +191,10 @@ export default function ContentTypes() {
         <Spinner />
     ) : (
         <div>
-            {contentTypes ? (
+            {data ? (
                 <Table>
                     <TableCaption>
-                        {contentTypes.length
+                        {data.length
                             ? 'A list of your used content types variables.'
                             : 'No content types data found.'}
                     </TableCaption>
@@ -116,7 +207,7 @@ export default function ContentTypes() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            contentTypes={contentTypes}
+                            data={data}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}
@@ -151,82 +242,3 @@ export default function ContentTypes() {
         </div>
     );
 }
-
-const RenderRows = ({
-    contentTypes,
-    editingState,
-    handleEditClick,
-    handleDeleteClick,
-    handleSaveClick,
-    handleCancelClick,
-    handleInputChange,
-}) => {
-    return contentTypes.map((contentType) => (
-        <TableRow key={contentType.id}>
-            <TableCell className="font-medium">{contentType.name}</TableCell>
-            <TableCell>
-                {editingState[contentType.id]?.isEditing ? (
-                    <Input
-                        className={
-                            !editingState[contentType.id]
-                                ? 'pointer-events-none'
-                                : ''
-                        }
-                        type="text"
-                        value={
-                            editingState[contentType.id]?.value ||
-                            contentType.value
-                        }
-                        onChange={(e) =>
-                            handleInputChange(contentType.id, e.target.value)
-                        }
-                        readOnly={!editingState[contentType.id]?.isEditing}
-                    />
-                ) : (
-                    <p>{contentType.value}</p>
-                )}
-            </TableCell>
-            <TableCell className="text-right">
-                {editingState[contentType.id]?.isEditing ? (
-                    <>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleSaveClick(contentType.id)}
-                        >
-                            <GoCheck />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleCancelClick(contentType.id)}
-                        >
-                            <GoX />
-                        </Button>
-                    </>
-                ) : (
-                    <div className="flex items-center justify-evenly">
-                        <RenderDialog
-                            activity={contentType}
-                            editingState={editingState}
-                            title="Are you absolutely sure?"
-                        />
-
-                        <GoPencil
-                            className="cursor-pointer text-blue-500"
-                            onClick={() =>
-                                handleEditClick(
-                                    contentType.id,
-                                    contentType.value
-                                )
-                            }
-                        />
-
-                        <AiOutlineDelete
-                            className="cursor-pointer text-destructive"
-                            onClick={() => handleDeleteClick(contentType.id)}
-                        />
-                    </div>
-                )}
-            </TableCell>
-        </TableRow>
-    ));
-};

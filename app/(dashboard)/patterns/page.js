@@ -16,8 +16,8 @@ import Spinner from '@/components/spinner/Spinner';
 import RenderRows from '@/components/dashboard/RenderRows';
 import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
-export default function patterns() {
-    const [patterns, setConstants] = useState([]);
+export default function Patterns() {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
@@ -25,7 +25,7 @@ export default function patterns() {
         try {
             const data = await getData('/api/v1/dashboard/patterns');
 
-            setConstants(data.data);
+            setData(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -155,7 +155,7 @@ export default function patterns() {
         try {
             const result = await deletedPromise;
             if (result.success) {
-                setConstants([]);
+                setData([]);
 
                 await fetchApiData();
             }
@@ -182,10 +182,10 @@ export default function patterns() {
         <Spinner />
     ) : (
         <div>
-            {patterns ? (
+            {data ? (
                 <Table>
                     <TableCaption>
-                        {patterns.length
+                        {data.length
                             ? 'A list of your used patterns variables.'
                             : 'No patterns data found.'}
                     </TableCaption>
@@ -198,7 +198,7 @@ export default function patterns() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            data={patterns}
+                            data={data}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}

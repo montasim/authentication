@@ -1,36 +1,31 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import {
     Table,
     TableBody,
     TableCaption,
     TableCell,
-    TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
-import { GoCheck, GoPencil, GoX } from 'react-icons/go';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
+import RenderRows from '@/components/dashboard/RenderRows';
+import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
 export default function ActivityTypes() {
-    const [activityTypes, setActivityTypes] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
         try {
-            setLoading(true);
-
             const data = await getData('/api/v1/dashboard/activity-types');
 
-            setActivityTypes(data);
+            setData(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -38,6 +33,8 @@ export default function ActivityTypes() {
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
@@ -49,9 +46,32 @@ export default function ActivityTypes() {
     };
 
     const handleDeleteClick = async (id) => {
-        await deleteData('/api/v1/dashboard/activity-types/', id);
+        const deletePromise = deleteData(
+            '/api/v1/dashboard/activity-types/',
+            id
+        );
 
-        await fetchApiData();
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleSaveClick = async (id) => {
@@ -59,27 +79,98 @@ export default function ActivityTypes() {
         const newName = editingState[id].name; // Assuming you also manage names
         const newDescription = editingState[id].description; // Assuming descriptions are also editable
 
-        await updateData(`/api/v1/dashboard/activity-types/${id}`, {
-            value: newValue,
-            name: newName,
-            description: newDescription,
+        const savePromise = updateData(
+            `/api/v1/dashboard/activity-types/${id}`,
+            {
+                value: newValue,
+                name: newName,
+                description: newDescription,
+            }
+        );
+
+        toast.promise(savePromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while saving the item.',
         });
 
-        await fetchApiData();
+        try {
+            const result = await savePromise;
+            if (result.success) {
+                await fetchApiData();
+
+                setEditingState({});
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleResetToDefaultClick = async () => {
-        await createData(`/api/v1/dashboard/activity-types`, {});
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/activity-types`,
+            {}
+        );
 
-        await fetchApiData();
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/activity-types`, '');
+        const deletedPromise = deleteData(
+            `/api/v1/dashboard/activity-types`,
+            ''
+        );
 
-        setActivityTypes([]);
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
 
-        await fetchApiData();
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setData([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleCancelClick = (id) => {
@@ -100,10 +191,10 @@ export default function ActivityTypes() {
         <Spinner />
     ) : (
         <div>
-            {activityTypes ? (
+            {data ? (
                 <Table>
                     <TableCaption>
-                        {activityTypes.length
+                        {data.length
                             ? 'A list of your used activity types variables.'
                             : 'No activity types data found.'}
                     </TableCaption>
@@ -116,7 +207,7 @@ export default function ActivityTypes() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            activityTypes={activityTypes}
+                            data={data}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}
@@ -151,78 +242,3 @@ export default function ActivityTypes() {
         </div>
     );
 }
-
-const RenderRows = ({
-    activityTypes,
-    editingState,
-    handleEditClick,
-    handleDeleteClick,
-    handleSaveClick,
-    handleCancelClick,
-    handleInputChange,
-}) => {
-    return activityTypes.map((activity) => (
-        <TableRow key={activity.id}>
-            <TableCell className="font-medium">{activity.name}</TableCell>
-            <TableCell>
-                {editingState[activity.id]?.isEditing ? (
-                    <Input
-                        className={
-                            !editingState[activity.id]
-                                ? 'pointer-events-none'
-                                : ''
-                        }
-                        type="text"
-                        value={
-                            editingState[activity.id]?.value || activity.value
-                        }
-                        onChange={(e) =>
-                            handleInputChange(activity.id, e.target.value)
-                        }
-                        readOnly={!editingState[activity.id]?.isEditing}
-                    />
-                ) : (
-                    <p>{activity.value}</p>
-                )}
-            </TableCell>
-            <TableCell className="text-right">
-                {editingState[activity.id]?.isEditing ? (
-                    <>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleSaveClick(activity.id)}
-                        >
-                            <GoCheck />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleCancelClick(activity.id)}
-                        >
-                            <GoX />
-                        </Button>
-                    </>
-                ) : (
-                    <div className="flex items-center justify-evenly">
-                        <RenderDialog
-                            activity={activity}
-                            editingState={editingState}
-                            title="Are you absolutely sure?"
-                        />
-
-                        <GoPencil
-                            className="cursor-pointer text-blue-500"
-                            onClick={() =>
-                                handleEditClick(activity.id, activity.value)
-                            }
-                        />
-
-                        <AiOutlineDelete
-                            className="cursor-pointer text-destructive"
-                            onClick={() => handleDeleteClick(activity.id)}
-                        />
-                    </div>
-                )}
-            </TableCell>
-        </TableRow>
-    ));
-};

@@ -17,7 +17,7 @@ import RenderRows from '@/components/dashboard/RenderRows';
 import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
 export default function Constants() {
-    const [constants, setConstants] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
@@ -25,7 +25,7 @@ export default function Constants() {
         try {
             const data = await getData('/api/v1/dashboard/constants');
 
-            setConstants(data.data);
+            setData(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -155,7 +155,7 @@ export default function Constants() {
         try {
             const result = await deletedPromise;
             if (result.success) {
-                setConstants([]);
+                setData([]);
 
                 await fetchApiData();
             }
@@ -182,10 +182,10 @@ export default function Constants() {
         <Spinner />
     ) : (
         <div>
-            {constants ? (
+            {data ? (
                 <Table>
                     <TableCaption>
-                        {constants.length
+                        {data.length
                             ? 'A list of your used constants variables.'
                             : 'No constants data found.'}
                     </TableCaption>
@@ -198,7 +198,7 @@ export default function Constants() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            data={constants}
+                            data={data}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}

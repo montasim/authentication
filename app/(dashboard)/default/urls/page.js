@@ -1,36 +1,31 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import {
     Table,
     TableBody,
     TableCaption,
     TableCell,
-    TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
-import { GoCheck, GoPencil, GoX } from 'react-icons/go';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
+import RenderRows from '@/components/dashboard/RenderRows';
+import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
 export default function DefaultUrls() {
-    const [urls, setUrls] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
         try {
-            setLoading(true);
-
             const data = await getData('/api/v1/dashboard/default/urls');
 
-            setUrls(data);
+            setData(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -38,6 +33,8 @@ export default function DefaultUrls() {
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
@@ -49,9 +46,29 @@ export default function DefaultUrls() {
     };
 
     const handleDeleteClick = async (id) => {
-        await deleteData('/api/v1/dashboard/default/urls/', id);
+        const deletePromise = deleteData('/api/v1/dashboard/default/urls/', id);
 
-        await fetchApiData();
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleSaveClick = async (id) => {
@@ -59,27 +76,92 @@ export default function DefaultUrls() {
         const newName = editingState[id].name; // Assuming you also manage names
         const newDescription = editingState[id].description; // Assuming descriptions are also editable
 
-        await updateData(`/api/v1/dashboard/default/urls/${id}`, {
+        const savePromise = updateData(`/api/v1/dashboard/default/urls/${id}`, {
             value: newValue,
             name: newName,
             description: newDescription,
         });
 
-        await fetchApiData();
+        toast.promise(savePromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while saving the item.',
+        });
+
+        try {
+            const result = await savePromise;
+            if (result.success) {
+                await fetchApiData();
+
+                setEditingState({});
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleResetToDefaultClick = async () => {
-        await createData(`/api/v1/dashboard/default/urls`, {});
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/default/urls`,
+            {}
+        );
 
-        await fetchApiData();
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/default/urls`, '');
+        const deletedPromise = deleteData(`/api/v1/dashboard/default/urls`, '');
 
-        setUrls([]);
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
 
-        await fetchApiData();
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setData([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleCancelClick = (id) => {
@@ -100,10 +182,10 @@ export default function DefaultUrls() {
         <Spinner />
     ) : (
         <div>
-            {urls ? (
+            {data ? (
                 <Table>
                     <TableCaption>
-                        {urls.length
+                        {data.length
                             ? 'A list of your used urls variables.'
                             : 'No urls data found.'}
                     </TableCaption>
@@ -116,7 +198,7 @@ export default function DefaultUrls() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            urls={urls}
+                            data={data}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}
@@ -151,72 +233,3 @@ export default function DefaultUrls() {
         </div>
     );
 }
-
-const RenderRows = ({
-    urls,
-    editingState,
-    handleEditClick,
-    handleDeleteClick,
-    handleSaveClick,
-    handleCancelClick,
-    handleInputChange,
-}) => {
-    return urls.map((url) => (
-        <TableRow key={url.id}>
-            <TableCell className="font-medium">{url.name}</TableCell>
-            <TableCell>
-                {editingState[url.id]?.isEditing ? (
-                    <Input
-                        className={
-                            !editingState[url.id] ? 'pointer-events-none' : ''
-                        }
-                        type="text"
-                        value={editingState[url.id]?.value || url.value}
-                        onChange={(e) =>
-                            handleInputChange(url.id, e.target.value)
-                        }
-                        readOnly={!editingState[url.id]?.isEditing}
-                    />
-                ) : (
-                    <p>{url.value}</p>
-                )}
-            </TableCell>
-            <TableCell className="text-right">
-                {editingState[url.id]?.isEditing ? (
-                    <>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleSaveClick(url.id)}
-                        >
-                            <GoCheck />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleCancelClick(url.id)}
-                        >
-                            <GoX />
-                        </Button>
-                    </>
-                ) : (
-                    <div className="flex items-center justify-evenly">
-                        <RenderDialog
-                            activity={url}
-                            editingState={editingState}
-                            title="Are you absolutely sure?"
-                        />
-
-                        <GoPencil
-                            className="cursor-pointer text-blue-500"
-                            onClick={() => handleEditClick(url.id, url.value)}
-                        />
-
-                        <AiOutlineDelete
-                            className="cursor-pointer text-destructive"
-                            onClick={() => handleDeleteClick(url.id)}
-                        />
-                    </div>
-                )}
-            </TableCell>
-        </TableRow>
-    ));
-};
