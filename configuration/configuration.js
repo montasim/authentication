@@ -9,6 +9,9 @@ const configuration = {
         url: process.env.NEXT_PUBLIC_MONGODB_URL,
     },
     redis: {
+        url: process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN,
+    },
+    blob: {
         url: process.env.NEXT_PUBLIC_REDIS_URL,
     },
     jwt: {

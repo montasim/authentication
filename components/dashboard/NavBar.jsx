@@ -15,9 +15,9 @@ export default function NavBar() {
                     className="size-10 rounded-lg object-cover"
                 />
 
-                <strong className="font-roboto uppercase font-semibold">
-                    Library Management System
-                </strong>
+                {/*<strong className="font-roboto uppercase font-semibold">*/}
+                {/*    Library Management System*/}
+                {/*</strong>*/}
             </div>
 
             <div className="flex items-center justify-between space-x-4">

@@ -122,6 +122,16 @@ export default function SideBar() {
                         <span className="">Common Passwords</span>
                     </p>
                 </Link>
+
+                <Link href="/upload">
+                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                            <MdPassword />
+                        </span>
+
+                        <span className="">Upload</span>
+                    </p>
+                </Link>
             </Card>
         </aside>
     );
