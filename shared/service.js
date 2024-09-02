@@ -267,6 +267,38 @@ const deleteValueByIdFromRedis = async (
     }
 };
 
+const createOrUpdateSetValuesToRedis = async (
+    request,
+    fileName,
+    redisKey,
+    entityName
+) => {
+    console.debug(`Starting ${entityName} add process`);
+
+    try {
+        const filePath = path.resolve('vendor/', fileName);
+        const data = await fs.readFile(filePath, 'utf8');
+        const domains = data
+            .split(/\r?\n/)
+            .filter((line) => line.trim() !== '');
+        if (domains.length > 0) {
+            // Using the correct method name `sadd`
+            await redis.sadd(redisKey, domains);
+            console.log(`${entityName} loaded into Redis`);
+        }
+
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${entityName} loaded successfully.`,
+            domains
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const addNewSetValuesToRedis = async (request, redisKey, entityName) => {
     console.debug(`Starting ${entityName} add process`);
 
@@ -321,6 +353,37 @@ const getSetValuesFromRedis = async (request, redisKey, entityName) => {
     }
 };
 
+const checkSetValueInRedis = async (request, redisKey, data, entityName) => {
+    console.debug(`Starting process to retrieve ${entityName}`);
+
+    try {
+        // Check if the domain exists in the 'blockedDomains' set
+        const exists = await redis.sismember(redisKey, data);
+        console.debug(`${entityName} existence check, Result: ${exists}`);
+
+        // Respond based on the existence of the domain
+        if (exists === 1) {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.OK,
+                `${entityName} exists in the blocked list.`,
+                { exists: true }
+            );
+        } else {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.OK,
+                `${entityName} does not exist in the blocked list.`,
+                { exists: false }
+            );
+        }
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
     console.debug(`Starting process to delete ${entityName}`);
 
@@ -350,6 +413,35 @@ const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
     }
 };
 
+const deleteSetValueFromRedis = async (request, redisKey, data, entityName) => {
+    console.debug(`Starting process to delete ${entityName}`);
+
+    try {
+        // Attempt to remove the domain from the 'blockedDomains' set
+        const removed = await redis.srem(redisKey, data);
+        console.debug(`${entityName} removal attempt, Result: ${removed}`);
+
+        // Respond based on the result of the removal
+        if (removed === 1) {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.OK,
+                `${entityName} successfully removed from the blocked list.`
+            );
+        } else {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.NOT_FOUND,
+                `${entityName} not found in the blocked list or already removed.`
+            );
+        }
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
@@ -357,9 +449,12 @@ const service = {
     getValueByIdFromRedis,
     updateValueByIdInRedis,
     deleteValueByIdFromRedis,
+    createOrUpdateSetValuesToRedis,
     addNewSetValuesToRedis,
     getSetValuesFromRedis,
+    checkSetValueInRedis,
     deleteSetValuesFromRedis,
+    deleteSetValueFromRedis,
 };
 
 export default service;
