@@ -267,6 +267,89 @@ const deleteValueByIdFromRedis = async (
     }
 };
 
+const addNewSetValuesToRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting ${entityName} add process`);
+
+    try {
+        // Parse the JSON body from the request
+        const { domain } = await request.json();
+        console.debug(`Received domain data: ${domain}`);
+
+        // Adding the domain to the Redis set 'blockedDomains'
+        const result = await redis.sadd('blockedDomains', domain);
+        const sentenceCase = toSentenceCase(entityName);
+        console.debug(`${sentenceCase} added to Redis, Result: ${result}`);
+
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${sentenceCase} added successfully.`,
+            result
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
+const getSetValuesFromRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting process to retrieve ${entityName}`);
+
+    try {
+        const data = await redis.smembers(redisKey);
+        if (!data) {
+            console.error(`No ${entityName} data found in Redis.`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} data found`,
+                {}
+            );
+        }
+
+        console.debug(`Successfully retrieved ${entityName} from Redis.`);
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${toSentenceCase(entityName)} retrieved successfully`,
+            data
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
+const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting process to delete ${entityName}`);
+
+    try {
+        // Delete the 'blockedDomains' set from Redis
+        const result = await redis.del('blockedDomains');
+        console.debug(`All ${entityName} set deleted, Result: ${result}`);
+
+        // Check if to delete was successful
+        if (result === 1) {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.OK,
+                `All ${entityName} have been successfully deleted.`
+            );
+        } else {
+            return sendResponse(
+                request,
+                true,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} to delete.`
+            );
+        }
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
 const service = {
     createOrUpdateDefaults,
     getValuesFromRedis,
@@ -274,6 +357,9 @@ const service = {
     getValueByIdFromRedis,
     updateValueByIdInRedis,
     deleteValueByIdFromRedis,
+    addNewSetValuesToRedis,
+    getSetValuesFromRedis,
+    deleteSetValuesFromRedis,
 };
 
 export default service;

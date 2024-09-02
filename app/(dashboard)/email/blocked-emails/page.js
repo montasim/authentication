@@ -23,25 +23,26 @@ export default function TemporaryEmailDomainsEditor() {
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchApiData = async () => {
-            setLoading(true);
-            try {
-                const data = await getData(
-                    '/api/v1/dashboard/email/blocked-emails'
-                );
-                setTemporaryEmailDomains(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-            setLoading(false);
-        };
+    const fetchApiData = async () => {
+        setLoading(true);
+        try {
+            const data = await getData(
+                '/api/v1/dashboard/email/blocked-emails'
+            );
+            setTemporaryEmailDomains(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        setLoading(false);
+    };
 
+    useEffect(() => {
         fetchApiData();
     }, []);
 
     const handleDeleteClick = async (domain) => {
-        await deleteData(`/api/v1/dashboard/email/blocked-emails/${domain}`);
+        console.log('domain', domain);
+        await deleteData(`/api/v1/dashboard/email/blocked-emails/`, domain);
         await fetchApiData();
     };
 
@@ -51,7 +52,7 @@ export default function TemporaryEmailDomainsEditor() {
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/email/blocked-emails`, {});
+        await deleteData(`/api/v1/dashboard/email/blocked-emails`, '');
         setTemporaryEmailDomains([]);
     };
 
