@@ -20,7 +20,7 @@ export default function RenderDialog({
     return (
         <AlertDialog>
             <AlertDialogTrigger>
-                <GoInfo className="text-purple-500" />
+                <GoInfo className="text-purple-500 text-lg" />
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
