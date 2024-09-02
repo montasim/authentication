@@ -95,6 +95,8 @@ export default function Constants() {
             const result = await savePromise;
             if (result.success) {
                 await fetchApiData();
+
+                setEditingState({});
             }
         } catch (error) {
             console.error('Error:', error.message);
