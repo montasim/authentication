@@ -186,7 +186,7 @@ export default function DefaultUrls() {
                 <Table>
                     <TableCaption>
                         {data.length
-                            ? 'A list of your used urls variables.'
+                            ? 'A list of your default URLs.'
                             : 'No urls data found.'}
                     </TableCaption>
                     <TableHeader>

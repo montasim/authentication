@@ -179,7 +179,7 @@ export default function BlockedEmailDomainsEditor() {
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="Blocked email domains">
+                    <CommandGroup heading="List of blocked email domains">
                         {data.map((domain, index) => (
                             <CommandItem
                                 key={index}

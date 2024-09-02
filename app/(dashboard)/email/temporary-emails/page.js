@@ -179,7 +179,7 @@ export default function TemporaryEmailDomainsEditor() {
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="Temporary email domains">
+                    <CommandGroup heading="List of temporary email domains">
                         {data.map((domain, index) => (
                             <CommandItem
                                 key={index}

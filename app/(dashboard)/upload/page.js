@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { deleteData, getData } from '@/utilities/axios';
+import { toast } from 'sonner';
+
 import {
     Table,
     TableBody,
@@ -16,50 +17,89 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import Spinner from '@/components/spinner/Spinner';
 import { AiOutlineDelete } from 'react-icons/ai';
+import { deleteData, getData } from '@/utilities/axios';
 
 export default function AvatarUploadPage() {
     const inputFileRef = useRef(null);
-    const [blob, setBlob] = useState(null);
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const fetchApiData = async () => {
         try {
             const data = await getData('/api/v1/avatar/download');
-            setFiles(data);
+
+            setFiles(data.data);
+            setLoading(false);
         } catch (error) {
-            console.error(error);
+            setLoading(false);
         }
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
     const handleFileUploadClick = async (event) => {
         event.preventDefault();
-
         const file = inputFileRef.current.files?.[0];
 
-        const response = await fetch(
-            `/api/v1/avatar/upload?filename=${file.name}`,
-            {
-                method: 'POST',
-                body: file,
-            }
-        );
+        if (file) {
+            const uploadPromise = fetch(
+                `/api/v1/avatar/upload?filename=${file.name}`,
+                {
+                    method: 'POST',
+                    body: file,
+                }
+            );
 
-        const newBlob = await response.json();
-
-        setBlob(newBlob);
-
-        await fetchApiData();
+            toast.promise(uploadPromise, {
+                loading: 'Uploading...',
+                success: async (result) => {
+                    if (result.ok) {
+                        const response = await result.json();
+                        console.log('File uploaded successfully:', response);
+                        await fetchApiData(); // Refresh the list after successful upload
+                        return 'File uploaded successfully.';
+                    } else {
+                        throw new Error('File upload failed.');
+                    }
+                },
+                error: 'An error occurred while uploading the item.',
+            });
+        } else {
+            toast.error('No file selected for upload.');
+        }
     };
 
     const handleDeleteClick = async (url) => {
-        await deleteData(`/api/v1/avatar/delete?url=${url}`, '');
+        const deletedPromise = deleteData(
+            `/api/v1/avatar/delete?url=${url}`,
+            ''
+        );
 
-        await fetchApiData();
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
+
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     return loading ? (
@@ -99,9 +139,7 @@ export default function AvatarUploadPage() {
                                         {file.url}
                                     </a>
                                 </TableCell>
-                                <TableCell>
-                                    {(file.size / 1024).toFixed(2)} MB
-                                </TableCell>
+                                <TableCell>{file.size}</TableCell>
                                 <TableCell>{file.uploadedAt}</TableCell>
                                 <TableCell className="text-right">
                                     <AiOutlineDelete
@@ -127,6 +165,7 @@ export default function AvatarUploadPage() {
                         name="file"
                         ref={inputFileRef}
                         type="file"
+                        className="cursor-pointer"
                     />
                     <Button
                         size="xs"

@@ -22,7 +22,7 @@ export default function Dashboard() {
 
             const data = await getData('/api/v1/uses');
 
-            setUsers(data);
+            setUsers(data.data);
             setLoading(false);
         } catch (error) {
             setLoading(false);

@@ -197,7 +197,7 @@ export default function DefaultGenderImages() {
                 <Table>
                     <TableCaption>
                         {data.length
-                            ? 'A list of your used default gender images variables.'
+                            ? 'A list of your used default gender images.'
                             : 'No default gender images data found.'}
                     </TableCaption>
                     <TableHeader>

@@ -186,7 +186,7 @@ export default function Patterns() {
                 <Table>
                     <TableCaption>
                         {data.length
-                            ? 'A list of your used patterns variables.'
+                            ? 'A list of your used regex patterns.'
                             : 'No patterns data found.'}
                     </TableCaption>
                     <TableHeader>

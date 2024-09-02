@@ -1,14 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { HiOutlineHome } from 'react-icons/hi';
 import { Card } from '@/components/ui/card';
-import { MdEmail, MdPassword, MdSpaceDashboard } from 'react-icons/md';
-import { LuActivitySquare } from 'react-icons/lu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MdBarChart, MdSpaceDashboard } from 'react-icons/md';
 import { PiDeviceTabletFill } from 'react-icons/pi';
 import { IoLinkSharp } from 'react-icons/io5';
-import { IoMdSettings } from 'react-icons/io';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+    RiLockPasswordFill,
+    RiMailCloseFill,
+    RiMailForbidFill,
+} from 'react-icons/ri';
+import { TbBracketsContain, TbGridPattern } from 'react-icons/tb';
+import { FaCloudUploadAlt, FaImage } from 'react-icons/fa';
+import { GrMultimedia } from 'react-icons/gr';
 
 export default function SideBar() {
     return (
@@ -28,7 +33,7 @@ export default function SideBar() {
                     <Link href="/constants">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <HiOutlineHome />
+                                <TbBracketsContain />
                             </span>
 
                             <span className="">Constants</span>
@@ -38,7 +43,7 @@ export default function SideBar() {
                     <Link href="/patterns">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <HiOutlineHome />
+                                <TbGridPattern />
                             </span>
 
                             <span className="">Patterns</span>
@@ -48,7 +53,7 @@ export default function SideBar() {
                     <Link href="/default/gender-images">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <IoMdSettings />
+                                <FaImage />
                             </span>
 
                             <span className="">Default Gender Image</span>
@@ -78,7 +83,7 @@ export default function SideBar() {
                     <Link href="/content-types">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <HiOutlineHome />
+                                <GrMultimedia />
                             </span>
 
                             <span className="">Content Types</span>
@@ -88,7 +93,7 @@ export default function SideBar() {
                     <Link href="/activity-types">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <LuActivitySquare />
+                                <MdBarChart />
                             </span>
 
                             <span className="">Activity Types</span>
@@ -98,7 +103,7 @@ export default function SideBar() {
                     <Link href="/email/temporary-emails">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <MdEmail />
+                                <RiMailCloseFill />
                             </span>
 
                             <span className="">Temporary Emails</span>
@@ -108,7 +113,7 @@ export default function SideBar() {
                     <Link href="/email/blocked-emails">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <MdEmail />
+                                <RiMailForbidFill />
                             </span>
 
                             <span className="">Blocked Emails</span>
@@ -118,7 +123,7 @@ export default function SideBar() {
                     <Link href="/common-passwords">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <MdPassword />
+                                <RiLockPasswordFill />
                             </span>
 
                             <span className="">Common Passwords</span>
@@ -128,7 +133,7 @@ export default function SideBar() {
                     <Link href="/upload">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                                <MdPassword />
+                                <FaCloudUploadAlt />
                             </span>
 
                             <span className="">Upload</span>
