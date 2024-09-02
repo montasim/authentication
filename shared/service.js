@@ -299,17 +299,12 @@ const createOrUpdateSetValuesToRedis = async (
     }
 };
 
-const addNewSetValuesToRedis = async (
-    request,
-    redisKey,
-    domain,
-    entityName
-) => {
+const addNewSetValuesToRedis = async (request, redisKey, key, entityName) => {
     console.debug(`Starting ${entityName} add process`);
 
     try {
         // Adding the domain to the Redis set 'blockedDomains'
-        const result = await redis.sadd(redisKey, domain);
+        const result = await redis.sadd(redisKey, key);
         const sentenceCase = toSentenceCase(entityName);
         console.debug(`${sentenceCase} added to Redis, Result: ${result}`);
 
@@ -389,7 +384,7 @@ const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
 
     try {
         // Delete the 'blockedDomains' set from Redis
-        const result = await redis.del('blockedDomains');
+        const result = await redis.del(redisKey);
         console.debug(`All ${entityName} set deleted, Result: ${result}`);
 
         // Check if to delete was successful

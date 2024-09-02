@@ -18,7 +18,7 @@ export const DELETE = async (request, context) => {
     const domain = params.domain;
     console.debug(`Attempting to delete domain: ${domain}`);
 
-    return await service.checkSetValueInRedis(
+    return await service.deleteSetValueFromRedis(
         request,
         'temporaryDomains',
         domain,
