@@ -20,14 +20,12 @@ axiosInstance.interceptors.request.use(
 );
 
 const handleAxiosError = (error) => {
-    if (error.response) {
-        if (error.response.status.startWith('5')) {
-            const code = error.response.status;
-            // Handle the case when the detail field is an array
-            const errorDetail = error.response.data.message;
+    if (error.response.status.startWith('5')) {
+        const code = error.response.status;
+        // Handle the case when the detail field is an array
+        const errorDetail = error.response.data.message;
 
-            toast.error(`${code} - ${errorDetail}`);
-        }
+        toast.error(`${code} - ${errorDetail}`);
     } else if (error.request) {
         toast.error('Network error: No response received from server.');
     } else {
@@ -39,9 +37,6 @@ const handleAxiosError = (error) => {
 export async function getData(endpoint) {
     try {
         const response = await axiosInstance.get(endpoint);
-        const message =
-            response?.data?.message || 'Unexpected response from server';
-        // toast.success(message);
         return response.data;
     } catch (error) {
         handleAxiosError(error);
@@ -53,9 +48,6 @@ export async function createData(endpoint, data) {
         const requestData =
             data instanceof FormData ? data : JSON.stringify({ ...data });
         const response = await axiosInstance.post(endpoint, requestData);
-        const message =
-            response?.data?.message || 'Unexpected response from server';
-        toast.success(message);
         return response.data;
     } catch (error) {
         handleAxiosError(error);
@@ -69,14 +61,9 @@ export async function updateData(endpoint, data) {
             ? { 'Content-Type': 'application/json', Hello: 'Hello' }
             : { 'Content-Type': 'application/json' };
         const requestData = isArray ? data : JSON.stringify({ ...data });
-
         const response = await axiosInstance.put(endpoint, requestData, {
             headers,
         });
-        const message =
-            response?.data?.message || 'Unexpected response from server';
-        toast.success(message);
-        console.log('Response:', response);
         return response.data;
     } catch (error) {
         handleAxiosError(error);
@@ -87,9 +74,6 @@ export async function deleteData(endpoint, id) {
     const url = endpoint + id;
     try {
         const response = await axiosInstance.delete(url);
-        const message =
-            response?.data?.message || 'Unexpected response from server';
-        toast.success(message);
         return response.data;
     } catch (error) {
         handleAxiosError(error);

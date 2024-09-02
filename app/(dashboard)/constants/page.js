@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import {
     Table,
@@ -11,10 +12,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
 import RenderRows from '@/components/dashboard/RenderRows';
-import { toast } from 'sonner';
+import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
 export default function Constants() {
     const [constants, setConstants] = useState([]);
@@ -22,10 +22,14 @@ export default function Constants() {
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
-        const data = await getData('/api/v1/dashboard/constants');
+        try {
+            const data = await getData('/api/v1/dashboard/constants');
 
-        setConstants(data.data);
-        setLoading(false);
+            setConstants(data.data);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -194,7 +198,7 @@ export default function Constants() {
                     </TableHeader>
                     <TableBody>
                         <RenderRows
-                            constants={constants}
+                            data={constants}
                             editingState={editingState}
                             handleEditClick={handleEditClick}
                             handleDeleteClick={handleDeleteClick}

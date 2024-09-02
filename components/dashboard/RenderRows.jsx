@@ -1,12 +1,13 @@
 import React from 'react';
+
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
 import { GoCheck, GoPencil, GoX } from 'react-icons/go';
 import { AiOutlineDelete } from 'react-icons/ai';
-import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
 
 export default function RenderRows({
-    constants,
+    data,
     editingState,
     handleEditClick,
     handleDeleteClick,
@@ -14,60 +15,54 @@ export default function RenderRows({
     handleCancelClick,
     handleInputChange,
 }) {
-    return constants.map((constant) => (
-        <TableRow key={constant.id}>
-            <TableCell className="font-medium">{constant.name}</TableCell>
+    return data.map((d) => (
+        <TableRow key={d.id}>
+            <TableCell className="font-medium">{d.name}</TableCell>
             <TableCell>
-                {editingState[constant.id]?.isEditing ? (
+                {editingState[d.id]?.isEditing ? (
                     <Input
                         className={
-                            !editingState[constant.id]
-                                ? 'pointer-events-none'
-                                : ''
+                            !editingState[d.id] ? 'pointer-events-none' : ''
                         }
                         type="text"
-                        value={
-                            editingState[constant.id]?.value || constant.value
-                        }
+                        value={editingState[d.id]?.value || d.value}
                         onChange={(e) =>
-                            handleInputChange(constant.id, e.target.value)
+                            handleInputChange(d.id, e.target.value)
                         }
-                        readOnly={!editingState[constant.id]?.isEditing}
+                        readOnly={!editingState[d.id]?.isEditing}
                     />
                 ) : (
-                    <p>{constant.value}</p>
+                    <p>{d.value}</p>
                 )}
             </TableCell>
             <TableCell className="text-right">
-                {editingState[constant.id]?.isEditing ? (
+                {editingState[d.id]?.isEditing ? (
                     <div className="flex items-center justify-end gap-3">
                         <GoCheck
                             className="cursor-pointer text-xl text-green-500"
-                            onClick={() => handleSaveClick(constant.id)}
+                            onClick={() => handleSaveClick(d.id)}
                         />
                         <GoX
                             className="cursor-pointer text-xl text-rose-500"
-                            onClick={() => handleCancelClick(constant.id)}
+                            onClick={() => handleCancelClick(d.id)}
                         />
                     </div>
                 ) : (
                     <div className="flex items-center justify-end gap-3">
                         <RenderDialog
-                            activity={constant}
+                            activity={d}
                             editingState={editingState}
                             title="Are you absolutely sure?"
                         />
 
                         <GoPencil
                             className="cursor-pointer text-lg text-blue-500"
-                            onClick={() =>
-                                handleEditClick(constant.id, constant.value)
-                            }
+                            onClick={() => handleEditClick(d.id, d.value)}
                         />
 
                         <AiOutlineDelete
                             className="cursor-pointer text-lg text-rose-500"
-                            onClick={() => handleDeleteClick(constant.id)}
+                            onClick={() => handleDeleteClick(d.id)}
                         />
                     </div>
                 )}
