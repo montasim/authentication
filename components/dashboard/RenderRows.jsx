@@ -1,10 +1,9 @@
+import React from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { GoCheck, GoPencil, GoX } from 'react-icons/go';
-import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
 import { AiOutlineDelete } from 'react-icons/ai';
-import React from 'react';
+import RenderDialog from '@/components/dashboard/ActivityDescriptionDialog';
 
 export default function RenderRows({
     constants,
@@ -41,22 +40,18 @@ export default function RenderRows({
             </TableCell>
             <TableCell className="text-right">
                 {editingState[constant.id]?.isEditing ? (
-                    <>
-                        <Button
-                            variant="outline"
+                    <div className="flex items-center justify-end gap-3">
+                        <GoCheck
+                            className="cursor-pointer text-xl text-green-500"
                             onClick={() => handleSaveClick(constant.id)}
-                        >
-                            <GoCheck />
-                        </Button>
-                        <Button
-                            variant="outline"
+                        />
+                        <GoX
+                            className="cursor-pointer text-xl text-rose-500"
                             onClick={() => handleCancelClick(constant.id)}
-                        >
-                            <GoX />
-                        </Button>
-                    </>
+                        />
+                    </div>
                 ) : (
-                    <div className="flex items-center justify-evenly">
+                    <div className="flex items-center justify-end gap-3">
                         <RenderDialog
                             activity={constant}
                             editingState={editingState}
@@ -64,14 +59,14 @@ export default function RenderRows({
                         />
 
                         <GoPencil
-                            className="cursor-pointer text-blue-500"
+                            className="cursor-pointer text-lg text-blue-500"
                             onClick={() =>
                                 handleEditClick(constant.id, constant.value)
                             }
                         />
 
                         <AiOutlineDelete
-                            className="cursor-pointer text-destructive"
+                            className="cursor-pointer text-lg text-rose-500"
                             onClick={() => handleDeleteClick(constant.id)}
                         />
                     </div>

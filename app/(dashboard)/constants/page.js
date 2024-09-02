@@ -21,19 +21,15 @@ export default function Constants() {
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
-        try {
-            setLoading(true);
+        const data = await getData('/api/v1/dashboard/constants');
 
-            const data = await getData('/api/v1/dashboard/constants');
-
-            setConstants(data);
-            setLoading(false);
-        } catch (error) {
-            setLoading(false);
-        }
+        setConstants(data);
+        setLoading(false);
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
