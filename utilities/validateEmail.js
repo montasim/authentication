@@ -37,7 +37,7 @@ const validateEmail = async (email) => {
     }
 
     const tempEmailDomains = await loadListFromFile(
-        '../vendor/tempEmailDomains.txt'
+        '../vendor/temporaryEmailDomains.txt'
     );
     if (tempEmailDomains.has(domain)) {
         return 'Use of temporary email services is not allowed';
