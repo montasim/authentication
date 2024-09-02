@@ -1,59 +1,132 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import {
     Command,
-    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator,
-    CommandShortcut,
 } from '@/components/ui/command';
-import { createData, deleteData, getData } from '@/utilities/axios';
-import Spinner from '@/components/spinner/Spinner';
-import { AiOutlineDelete } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Spinner from '@/components/spinner/Spinner';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { createData, deleteData, getData } from '@/utilities/axios';
 
-export default function TemporaryEmailDomainsEditor() {
-    const [temporaryEmailDomains, setTemporaryEmailDomains] = useState([]);
+export default function BlockedEmailDomainsEditor() {
+    const [data, setData] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(true);
 
     const fetchApiData = async () => {
-        setLoading(true);
         try {
             const data = await getData(
                 '/api/v1/dashboard/email/blocked-emails'
             );
-            setTemporaryEmailDomains(data);
+
+            setData(data.data);
+            setLoading(false);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
+        setLoading(true);
+
         fetchApiData();
     }, []);
 
     const handleDeleteClick = async (domain) => {
-        console.log('domain', domain);
-        await deleteData(`/api/v1/dashboard/email/blocked-emails/`, domain);
-        await fetchApiData();
+        const deletePromise = deleteData(
+            '/api/v1/dashboard/email/blocked-emails/',
+            domain
+        );
+
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleResetToDefaultClick = async () => {
-        await createData(`/api/v1/dashboard/email/blocked-emails/default`, {});
-        await fetchApiData();
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/email/blocked-emails/default`,
+            {}
+        );
+
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/email/blocked-emails`, '');
-        setTemporaryEmailDomains([]);
+        const deletedPromise = deleteData(
+            `/api/v1/dashboard/email/blocked-emails`,
+            ''
+        );
+
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
+
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setData([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleAddNewDomainClick = async () => {
@@ -62,11 +135,36 @@ export default function TemporaryEmailDomainsEditor() {
             return;
         }
 
-        await createData(`/api/v1/dashboard/email/blocked-emails`, {
-            domain: inputValue,
+        const createPromise = createData(
+            `/api/v1/dashboard/email/blocked-emails`,
+            {
+                domain: inputValue,
+            }
+        );
+
+        toast.promise(createPromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Saving the values.',
         });
-        setInputValue('');
-        await fetchApiData();
+
+        try {
+            const result = await createPromise;
+            if (result.success) {
+                setInputValue('');
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -82,14 +180,14 @@ export default function TemporaryEmailDomainsEditor() {
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
                     <CommandGroup heading="Blocked email domains">
-                        {temporaryEmailDomains.map((domain, index) => (
+                        {data.map((domain, index) => (
                             <CommandItem
                                 key={index}
                                 className="flex items-center justify-between"
                             >
                                 <p>{domain}</p>
                                 <AiOutlineDelete
-                                    className="cursor-pointer text-destructive"
+                                    className="cursor-pointer text-rose-500 text-lg"
                                     onClick={() => handleDeleteClick(domain)}
                                 />
                             </CommandItem>
