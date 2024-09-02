@@ -5,21 +5,12 @@
  * This modular approach to schema management facilitates reusability, maintains consistency across different parts of the application, and simplifies the maintenance of the database model.
  */
 
-import Redis from 'ioredis';
 import { Schema } from 'mongoose';
 
 import constants from '@/constants/constants.js';
 import usersConstants from '@/app/api/v1/(users)/users.constants.js';
-import configuration from '@/configuration/configuration';
 
 import getPatternByName from '@/utilities/getPatternByName';
-
-const redis = new Redis(configuration.redis.url);
-
-const getActivityTypeValues = async () => {
-    const activityTypes = JSON.parse(await redis.get('activityTypes'));
-    return activityTypes.map((type) => type.value);
-};
 
 /**
  * @schema usernameSchema
