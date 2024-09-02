@@ -21,11 +21,13 @@ axiosInstance.interceptors.request.use(
 
 const handleAxiosError = (error) => {
     if (error.response) {
-        const code = error.response.status;
-        // Handle the case when the detail field is an array
-        const errorDetail = error.response.data.message;
+        if (error.response.status.startWith('5')) {
+            const code = error.response.status;
+            // Handle the case when the detail field is an array
+            const errorDetail = error.response.data.message;
 
-        toast.error(`${code} - ${errorDetail}`);
+            toast.error(`${code} - ${errorDetail}`);
+        }
     } else if (error.request) {
         toast.error('Network error: No response received from server.');
     } else {
@@ -39,8 +41,8 @@ export async function getData(endpoint) {
         const response = await axiosInstance.get(endpoint);
         const message =
             response?.data?.message || 'Unexpected response from server';
-        toast.success(message);
-        return response.data.data;
+        // toast.success(message);
+        return response.data;
     } catch (error) {
         handleAxiosError(error);
     }
@@ -54,7 +56,7 @@ export async function createData(endpoint, data) {
         const message =
             response?.data?.message || 'Unexpected response from server';
         toast.success(message);
-        return response.data.data;
+        return response.data;
     } catch (error) {
         handleAxiosError(error);
     }
@@ -75,7 +77,7 @@ export async function updateData(endpoint, data) {
             response?.data?.message || 'Unexpected response from server';
         toast.success(message);
         console.log('Response:', response);
-        return response.data.data;
+        return response.data;
     } catch (error) {
         handleAxiosError(error);
     }
@@ -88,7 +90,7 @@ export async function deleteData(endpoint, id) {
         const message =
             response?.data?.message || 'Unexpected response from server';
         toast.success(message);
-        return response.data.data;
+        return response.data;
     } catch (error) {
         handleAxiosError(error);
     }

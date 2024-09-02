@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 import Spinner from '@/components/spinner/Spinner';
 import RenderRows from '@/components/dashboard/RenderRows';
+import { toast } from 'sonner';
 
 export default function Constants() {
     const [constants, setConstants] = useState([]);
@@ -23,7 +24,7 @@ export default function Constants() {
     const fetchApiData = async () => {
         const data = await getData('/api/v1/dashboard/constants');
 
-        setConstants(data);
+        setConstants(data.data);
         setLoading(false);
     };
 
@@ -41,9 +42,29 @@ export default function Constants() {
     };
 
     const handleDeleteClick = async (id) => {
-        await deleteData('/api/v1/dashboard/constants/', id);
+        const deletePromise = deleteData('/api/v1/dashboard/constants/', id);
 
-        await fetchApiData();
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleSaveClick = async (id) => {
@@ -51,27 +72,90 @@ export default function Constants() {
         const newName = editingState[id].name; // Assuming you also manage names
         const newDescription = editingState[id].description; // Assuming descriptions are also editable
 
-        await updateData(`/api/v1/dashboard/constants/${id}`, {
+        const savePromise = updateData(`/api/v1/dashboard/constants/${id}`, {
             value: newValue,
             name: newName,
             description: newDescription,
         });
 
-        await fetchApiData();
+        toast.promise(savePromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while saving the item.',
+        });
+
+        try {
+            const result = await savePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleResetToDefaultClick = async () => {
-        await createData(`/api/v1/dashboard/constants`, {});
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/constants`,
+            {}
+        );
 
-        await fetchApiData();
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleDeleteAllClick = async () => {
-        await deleteData(`/api/v1/dashboard/constants`, '');
+        const deletedPromise = deleteData(`/api/v1/dashboard/constants`, '');
 
-        setConstants([]);
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
 
-        await fetchApiData();
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setConstants([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     const handleCancelClick = (id) => {
