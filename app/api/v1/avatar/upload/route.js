@@ -1,5 +1,8 @@
 import { put } from '@vercel/blob';
-import { NextResponse } from 'next/server';
+
+import httpStatus from '@/constants/httpStatus.constants';
+
+import sendResponse from '@/utilities/sendResponse';
 
 export async function POST(request) {
     const { searchParams } = new URL(request.url);
@@ -15,7 +18,13 @@ export async function POST(request) {
     //   access: 'public',
     // });
 
-    return NextResponse.json(blob);
+    return sendResponse(
+        request,
+        true,
+        httpStatus.OK,
+        'File uploaded successfully.',
+        blob
+    );
 }
 
 // The next lines are required for Pages API Routes only

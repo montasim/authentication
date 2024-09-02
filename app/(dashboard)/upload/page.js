@@ -21,9 +21,7 @@ export default function AvatarUploadPage() {
                         file
                     );
 
-                    const newBlob = await response.json();
-
-                    setBlob(newBlob);
+                    setBlob(response);
                 }}
             >
                 <input name="file" ref={inputFileRef} type="file" required />
