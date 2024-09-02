@@ -299,16 +299,17 @@ const createOrUpdateSetValuesToRedis = async (
     }
 };
 
-const addNewSetValuesToRedis = async (request, redisKey, entityName) => {
+const addNewSetValuesToRedis = async (
+    request,
+    redisKey,
+    domain,
+    entityName
+) => {
     console.debug(`Starting ${entityName} add process`);
 
     try {
-        // Parse the JSON body from the request
-        const { domain } = await request.json();
-        console.debug(`Received domain data: ${domain}`);
-
         // Adding the domain to the Redis set 'blockedDomains'
-        const result = await redis.sadd('blockedDomains', domain);
+        const result = await redis.sadd(redisKey, domain);
         const sentenceCase = toSentenceCase(entityName);
         console.debug(`${sentenceCase} added to Redis, Result: ${result}`);
 
@@ -316,8 +317,7 @@ const addNewSetValuesToRedis = async (request, redisKey, entityName) => {
             request,
             true,
             httpStatus.OK,
-            `${sentenceCase} added successfully.`,
-            result
+            `${sentenceCase} added successfully.`
         );
     } catch (error) {
         return sendErrorResponse(request, error);

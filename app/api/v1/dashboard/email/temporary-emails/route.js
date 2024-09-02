@@ -1,9 +1,13 @@
 import service from '@/shared/service';
 
 export const POST = async (request) => {
+    const newDomain = await request.json();
+    console.debug(`Received domain data: ${JSON.stringify(newDomain.domain)}`);
+
     return await service.addNewSetValuesToRedis(
         request,
         'temporaryDomains',
+        newDomain.domain,
         'temporary domains'
     );
 };
