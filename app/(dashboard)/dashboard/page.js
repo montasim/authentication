@@ -1,42 +1,73 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { toast } from 'sonner';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { getData } from '@/utilities/axios';
+import Spinner from '@/components/spinner/Spinner';
 
 export default function Dashboard() {
-    // State to hold the fetched data
     const [uses, setUsers] = useState([]);
-    // State to handle spinner and error states
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchApiData = async () => {
+        try {
+            setLoading(true);
+
+            const data = await getData('/api/v1/uses');
+
+            setUsers(data);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        // Function to fetch uses
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get('/api/v1/uses');
-                setUsers(response.data.data); // Assuming the response data is the array of uses
-                setIsLoading(false);
-                toast.success('Data fetched successfully.');
-            } catch (err) {
-                setError(err.message); // Handle errors
-                setIsLoading(false); // Set spinner to false if an error occurs
-            }
-        };
-
-        fetchUsers();
-    }, []); // Empty dependency array ensures this runs only once on mount
-
-    // Render UI based on data fetching state
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+        fetchApiData();
+    }, []);
 
     // Display data
-    return (
-        <div>
-            <h1>Uses</h1>
-            {uses.use > 0 ? <div>{uses.use}</div> : <div>No uses found.</div>}
+    return loading ? (
+        <Spinner />
+    ) : (
+        <div className="py-4 px-2 grid grid-cols-5 gap-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Served Request</CardTitle>
+                    <CardDescription>{uses.use ? uses.use : 0}</CardDescription>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Successful Request</CardTitle>
+                    <CardDescription>{uses.use ? uses.use : 0}</CardDescription>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Failed Request</CardTitle>
+                    <CardDescription>{uses.use ? uses.use : 0}</CardDescription>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Bad Request</CardTitle>
+                    <CardDescription>{uses.use ? uses.use : 0}</CardDescription>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Server Error</CardTitle>
+                    <CardDescription>{uses.use ? uses.use : 0}</CardDescription>
+                </CardHeader>
+            </Card>
         </div>
     );
 }

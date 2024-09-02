@@ -8,130 +8,145 @@ import { LuActivitySquare } from 'react-icons/lu';
 import { PiDeviceTabletFill } from 'react-icons/pi';
 import { IoLinkSharp } from 'react-icons/io5';
 import { IoMdSettings } from 'react-icons/io';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function SideBar() {
     return (
         <aside className="h-full">
-            <Card className="w-60 h-full p-4">
-                <Link href="/dashboard">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <MdSpaceDashboard />
-                        </span>
+            <Card className="flex flex-col justify-between w-60 h-full p-4">
+                <div className="">
+                    <Link href="/dashboard">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <MdSpaceDashboard />
+                            </span>
 
-                        <span className="">Dashboard</span>
-                    </p>
-                </Link>
+                            <span className="">Dashboard</span>
+                        </p>
+                    </Link>
 
-                <Link href="/constants">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
-                        </span>
+                    <Link href="/constants">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <HiOutlineHome />
+                            </span>
 
-                        <span className="">Constants</span>
-                    </p>
-                </Link>
+                            <span className="">Constants</span>
+                        </p>
+                    </Link>
 
-                <Link href="/patterns">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
-                        </span>
+                    <Link href="/patterns">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <HiOutlineHome />
+                            </span>
 
-                        <span className="">Patterns</span>
-                    </p>
-                </Link>
+                            <span className="">Patterns</span>
+                        </p>
+                    </Link>
 
-                <Link href="/default/gender-images">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <IoMdSettings />
-                        </span>
+                    <Link href="/default/gender-images">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <IoMdSettings />
+                            </span>
 
-                        <span className="">Default Gender Image</span>
-                    </p>
-                </Link>
+                            <span className="">Default Gender Image</span>
+                        </p>
+                    </Link>
 
-                <Link href="/default/urls">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <IoLinkSharp />
-                        </span>
+                    <Link href="/default/urls">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <IoLinkSharp />
+                            </span>
 
-                        <span className="">Default URLs</span>
-                    </p>
-                </Link>
+                            <span className="">Default URLs</span>
+                        </p>
+                    </Link>
 
-                <Link href="/environments">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <PiDeviceTabletFill />
-                        </span>
+                    <Link href="/environments">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <PiDeviceTabletFill />
+                            </span>
 
-                        <span className="">Environments</span>
-                    </p>
-                </Link>
+                            <span className="">Environments</span>
+                        </p>
+                    </Link>
 
-                <Link href="/content-types">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <HiOutlineHome />
-                        </span>
+                    <Link href="/content-types">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <HiOutlineHome />
+                            </span>
 
-                        <span className="">Content Types</span>
-                    </p>
-                </Link>
+                            <span className="">Content Types</span>
+                        </p>
+                    </Link>
 
-                <Link href="/activity-types">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <LuActivitySquare />
-                        </span>
+                    <Link href="/activity-types">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <LuActivitySquare />
+                            </span>
 
-                        <span className="">Activity Types</span>
-                    </p>
-                </Link>
+                            <span className="">Activity Types</span>
+                        </p>
+                    </Link>
 
-                <Link href="/email/temporary-emails">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <MdEmail />
-                        </span>
+                    <Link href="/email/temporary-emails">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <MdEmail />
+                            </span>
 
-                        <span className="">Temporary Emails</span>
-                    </p>
-                </Link>
+                            <span className="">Temporary Emails</span>
+                        </p>
+                    </Link>
 
-                <Link href="/email/blocked-emails">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <MdEmail />
-                        </span>
+                    <Link href="/email/blocked-emails">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <MdEmail />
+                            </span>
 
-                        <span className="">Blocked Emails</span>
-                    </p>
-                </Link>
+                            <span className="">Blocked Emails</span>
+                        </p>
+                    </Link>
 
-                <Link href="/common-passwords">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <MdPassword />
-                        </span>
+                    <Link href="/common-passwords">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <MdPassword />
+                            </span>
 
-                        <span className="">Common Passwords</span>
-                    </p>
-                </Link>
+                            <span className="">Common Passwords</span>
+                        </p>
+                    </Link>
 
-                <Link href="/upload">
-                    <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
-                        <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
-                            <MdPassword />
-                        </span>
+                    <Link href="/upload">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <MdPassword />
+                            </span>
 
-                        <span className="">Upload</span>
-                    </p>
-                </Link>
+                            <span className="">Upload</span>
+                        </p>
+                    </Link>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Avatar>
+                        <AvatarImage
+                            src="https://avatars.githubusercontent.com/u/95298623?v=4"
+                            alt="@shadcn"
+                        />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+
+                    <strong className="font-roboto font-semibold">Admin</strong>
+                </div>
             </Card>
         </aside>
     );
