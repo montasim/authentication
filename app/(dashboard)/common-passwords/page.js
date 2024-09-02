@@ -1,65 +1,228 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@/components/ui/command';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import Spinner from '@/components/spinner/Spinner';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { createData, deleteData, getData } from '@/utilities/axios';
 
-export default function BlockedEmailDomainsEditor() {
-    const [commonPasswords, setCommonPasswords] = useState('');
+export default function CommonPasswords() {
+    const [data, setData] = useState([]);
+    const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchFileContent() {
-            try {
-                const response = await fetch(
-                    '/api/v1/dashboard/common-passwords'
-                );
-                const data = await response.json();
-                setCommonPasswords(data.data);
-            } catch (error) {
-                console.error('Error spinner the file:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchFileContent();
-    }, []);
-
-    const handleSave = async () => {
+    const fetchApiData = async () => {
         try {
-            const response = await fetch('/api/v1/dashboard/common-passwords', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ content: commonPasswords }),
-            });
+            const data = await getData('/api/v1/dashboard/common-passwords');
 
-            if (!response.ok) {
-                throw new Error('Failed to save the file');
-            }
-
-            alert('File saved successfully!');
+            setData(data.data);
+            setLoading(false);
         } catch (error) {
-            console.error('Error saving the file:', error);
+            setLoading(false);
         }
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    useEffect(() => {
+        setLoading(true);
 
-    return (
-        <div>
-            <Textarea
-                className="resize-y h-96"
-                value={commonPasswords}
-                onChange={(e) => setCommonPasswords(e.target.value)}
-            />
-            <Button onClick={handleSave} className="mt-4">
-                Save
-            </Button>
+        fetchApiData();
+    }, []);
+
+    const handleDeleteClick = async (domain) => {
+        const deletePromise = deleteData(
+            '/api/v1/dashboard/common-passwords/',
+            domain
+        );
+
+        toast.promise(deletePromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while deleting the item.',
+        });
+
+        try {
+            const result = await deletePromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    const handleResetToDefaultClick = async () => {
+        const createDefaultPromise = createData(
+            `/api/v1/dashboard/common-passwords/default`,
+            {}
+        );
+
+        toast.promise(createDefaultPromise, {
+            loading: 'Resetting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while resetting the values.',
+        });
+
+        try {
+            const result = await createDefaultPromise;
+            if (result.success) {
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    const handleDeleteAllClick = async () => {
+        const deletedPromise = deleteData(
+            `/api/v1/dashboard/common-passwords`,
+            ''
+        );
+
+        toast.promise(deletedPromise, {
+            loading: 'Deleting...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Deleting the values.',
+        });
+
+        try {
+            const result = await deletedPromise;
+            if (result.success) {
+                setData([]);
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    const handleAddNewDomainClick = async () => {
+        if (inputValue.trim() === '') {
+            alert('Please enter a password.');
+            return;
+        }
+
+        const createPromise = createData(`/api/v1/dashboard/common-passwords`, {
+            domain: inputValue,
+        });
+
+        toast.promise(createPromise, {
+            loading: 'Saving...',
+            success: (result) => {
+                // Check if the delete operation was successful
+                if (result.success) {
+                    return result.message;
+                } else {
+                    throw new Error(result.message);
+                }
+            },
+            error: 'An error occurred while Saving the values.',
+        });
+
+        try {
+            const result = await createPromise;
+            if (result.success) {
+                setInputValue('');
+
+                await fetchApiData();
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+    };
+
+    return loading ? (
+        <Spinner />
+    ) : (
+        <div className="flex flex-col gap-4">
+            <Command>
+                <CommandInput placeholder="Type a command or search..." />
+                <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="List of commmon passwords">
+                        {data.map((domain, index) => (
+                            <CommandItem
+                                key={index}
+                                className="flex items-center justify-between"
+                            >
+                                <p>{domain}</p>
+                                <AiOutlineDelete
+                                    className="cursor-pointer text-rose-500 text-lg"
+                                    onClick={() => handleDeleteClick(domain)}
+                                />
+                            </CommandItem>
+                        ))}
+                    </CommandGroup>
+                </CommandList>
+            </Command>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <Input
+                        type="text"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                    />
+                    <Button
+                        size="xs"
+                        className="text-xs p-1.5 px-2"
+                        onClick={handleAddNewDomainClick}
+                    >
+                        Add New
+                    </Button>
+                </div>
+                <div className="flex items-center gap-4">
+                    <Button
+                        size="xs"
+                        className="text-xs p-1.5 px-2"
+                        onClick={handleResetToDefaultClick}
+                    >
+                        Reset to default
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        size="xs"
+                        className="text-xs p-1.5 px-2"
+                        onClick={handleDeleteAllClick}
+                    >
+                        Delete All
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }
