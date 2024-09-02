@@ -161,43 +161,38 @@ const RenderRows = ({
     handleCancelClick,
     handleInputChange,
 }) => {
-    return urls.map((genderImage) => (
-        <TableRow key={genderImage.id}>
-            <TableCell className="font-medium">{genderImage.name}</TableCell>
+    return urls.map((url) => (
+        <TableRow key={url.id}>
+            <TableCell className="font-medium">{url.name}</TableCell>
             <TableCell>
-                {editingState[genderImage.id]?.isEditing ? (
+                {editingState[url.id]?.isEditing ? (
                     <Input
                         className={
-                            !editingState[genderImage.id]
-                                ? 'pointer-events-none'
-                                : ''
+                            !editingState[url.id] ? 'pointer-events-none' : ''
                         }
                         type="text"
-                        value={
-                            editingState[genderImage.id]?.value ||
-                            genderImage.value
-                        }
+                        value={editingState[url.id]?.value || url.value}
                         onChange={(e) =>
-                            handleInputChange(genderImage.id, e.target.value)
+                            handleInputChange(url.id, e.target.value)
                         }
-                        readOnly={!editingState[genderImage.id]?.isEditing}
+                        readOnly={!editingState[url.id]?.isEditing}
                     />
                 ) : (
-                    <p>{genderImage.value}</p>
+                    <p>{url.value}</p>
                 )}
             </TableCell>
             <TableCell className="text-right">
-                {editingState[genderImage.id]?.isEditing ? (
+                {editingState[url.id]?.isEditing ? (
                     <>
                         <Button
                             variant="outline"
-                            onClick={() => handleSaveClick(genderImage.id)}
+                            onClick={() => handleSaveClick(url.id)}
                         >
                             <GoCheck />
                         </Button>
                         <Button
                             variant="outline"
-                            onClick={() => handleCancelClick(genderImage.id)}
+                            onClick={() => handleCancelClick(url.id)}
                         >
                             <GoX />
                         </Button>
@@ -205,24 +200,19 @@ const RenderRows = ({
                 ) : (
                     <div className="flex items-center justify-evenly">
                         <RenderDialog
-                            genderImage={genderImage}
+                            activity={url}
                             editingState={editingState}
                             title="Are you absolutely sure?"
                         />
 
                         <GoPencil
                             className="cursor-pointer text-blue-500"
-                            onClick={() =>
-                                handleEditClick(
-                                    genderImage.id,
-                                    genderImage.value
-                                )
-                            }
+                            onClick={() => handleEditClick(url.id, url.value)}
                         />
 
                         <AiOutlineDelete
                             className="cursor-pointer text-destructive"
-                            onClick={() => handleDeleteClick(genderImage.id)}
+                            onClick={() => handleDeleteClick(url.id)}
                         />
                     </div>
                 )}

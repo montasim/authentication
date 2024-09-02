@@ -161,40 +161,43 @@ const RenderRows = ({
     handleCancelClick,
     handleInputChange,
 }) => {
-    return contentTypes.map((content) => (
-        <TableRow key={content.id}>
-            <TableCell className="font-medium">{content.name}</TableCell>
+    return contentTypes.map((contentType) => (
+        <TableRow key={contentType.id}>
+            <TableCell className="font-medium">{contentType.name}</TableCell>
             <TableCell>
-                {editingState[content.id]?.isEditing ? (
+                {editingState[contentType.id]?.isEditing ? (
                     <Input
                         className={
-                            !editingState[content.id]
+                            !editingState[contentType.id]
                                 ? 'pointer-events-none'
                                 : ''
                         }
                         type="text"
-                        value={editingState[content.id]?.value || content.value}
-                        onChange={(e) =>
-                            handleInputChange(content.id, e.target.value)
+                        value={
+                            editingState[contentType.id]?.value ||
+                            contentType.value
                         }
-                        readOnly={!editingState[content.id]?.isEditing}
+                        onChange={(e) =>
+                            handleInputChange(contentType.id, e.target.value)
+                        }
+                        readOnly={!editingState[contentType.id]?.isEditing}
                     />
                 ) : (
-                    <p>{content.value}</p>
+                    <p>{contentType.value}</p>
                 )}
             </TableCell>
             <TableCell className="text-right">
-                {editingState[content.id]?.isEditing ? (
+                {editingState[contentType.id]?.isEditing ? (
                     <>
                         <Button
                             variant="outline"
-                            onClick={() => handleSaveClick(content.id)}
+                            onClick={() => handleSaveClick(contentType.id)}
                         >
                             <GoCheck />
                         </Button>
                         <Button
                             variant="outline"
-                            onClick={() => handleCancelClick(content.id)}
+                            onClick={() => handleCancelClick(contentType.id)}
                         >
                             <GoX />
                         </Button>
@@ -202,7 +205,7 @@ const RenderRows = ({
                 ) : (
                     <div className="flex items-center justify-evenly">
                         <RenderDialog
-                            content={content}
+                            activity={contentType}
                             editingState={editingState}
                             title="Are you absolutely sure?"
                         />
@@ -210,13 +213,16 @@ const RenderRows = ({
                         <GoPencil
                             className="cursor-pointer text-blue-500"
                             onClick={() =>
-                                handleEditClick(content.id, content.value)
+                                handleEditClick(
+                                    contentType.id,
+                                    contentType.value
+                                )
                             }
                         />
 
                         <AiOutlineDelete
                             className="cursor-pointer text-destructive"
-                            onClick={() => handleDeleteClick(content.id)}
+                            onClick={() => handleDeleteClick(contentType.id)}
                         />
                     </div>
                 )}

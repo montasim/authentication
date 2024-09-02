@@ -204,7 +204,7 @@ const RenderRows = ({
                 ) : (
                     <div className="flex items-center justify-evenly">
                         <RenderDialog
-                            genderImage={constant}
+                            activity={constant}
                             editingState={editingState}
                             title="Are you absolutely sure?"
                         />
