@@ -10,13 +10,9 @@ export const POST = async (request) => {
 };
 
 export const GET = async (request, context) => {
-    const url = new URL(request.url);
-    const queryParams = Object.fromEntries(url.searchParams.entries());
-
     return await service.getValuesFromRedis(
         request,
         'defaultGenderImages',
-        queryParams, // Pass the entire queryParams object, it could be empty
         'default gender images'
     );
 };

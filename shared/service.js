@@ -64,18 +64,14 @@ const createOrUpdateDefaults = async (
     }
 };
 
-const getValuesFromRedis = async (
-    request,
-    redisKey,
-    searchParams,
-    entityName
-) => {
-    console.debug(
-        `Starting process to retrieve ${searchParams && Object.keys(searchParams).length > 0 ? 'filtered' : 'all'} ${entityName}`
-    );
+const getValuesFromRedis = async (request, redisKey, entityName) => {
+    console.debug(`Starting process to retrieve ${entityName}`);
 
     try {
-        console.debug('Query Parameters:', searchParams);
+        const url = new URL(request.url);
+        const queryParams = Object.fromEntries(url.searchParams.entries());
+
+        console.debug('Query Parameters:', queryParams);
         const data = await redis.get(redisKey);
         if (!data) {
             console.error(`No ${entityName} data found in Redis.`);
@@ -92,9 +88,9 @@ const getValuesFromRedis = async (
         let filteredValues = values;
 
         // If there are search parameters, filter the values
-        if (Object.keys(searchParams).length > 0) {
+        if (Object.keys(queryParams).length > 0) {
             filteredValues = values.filter((item) =>
-                Object.entries(searchParams).every(
+                Object.entries(queryParams).every(
                     ([key, value]) =>
                         item[key] && item[key].toString() === value.toString()
                 )
