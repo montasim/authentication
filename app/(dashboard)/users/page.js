@@ -10,12 +10,12 @@ import {
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Spinner from '@/components/spinner/Spinner';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { createData, deleteData, getData } from '@/utilities/axios';
-import { log } from 'next/dist/server/typescript/utils';
 
 export default function BlockedEmailDomainsEditor() {
     const [data, setData] = useState([]);
@@ -177,22 +177,48 @@ export default function BlockedEmailDomainsEditor() {
             <Command>
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="List of blocked email domains">
-                        {data &&
-                            data?.map((user, index) => (
-                                <CommandItem
-                                    key={index}
-                                    className="flex items-center justify-between"
-                                >
-                                    <p>{user?.name?.first}</p>
-                                    <AiOutlineDelete
-                                        className="cursor-pointer text-rose-500 text-lg"
-                                        onClick={() => handleDeleteClick(user)}
-                                    />
-                                </CommandItem>
+                    {data && data.length > 0 ? (
+                        <CommandGroup heading="List of blocked email domains">
+                            {data.map((siteData) => (
+                                <React.Fragment key={siteData + siteData}>
+                                    <p className="text-lg">
+                                        {siteData?.site} -{' '}
+                                        {siteData?.data?.length}
+                                    </p>
+                                    {siteData?.data?.map((item) => (
+                                        <CommandItem
+                                            key={item?._id}
+                                            className="flex items-center justify-between"
+                                        >
+                                            <Avatar>
+                                                <AvatarImage
+                                                    src={
+                                                        item?.image
+                                                            ?.downloadLink
+                                                    }
+                                                    alt={`${item?.name?.first} image`}
+                                                />
+                                                <AvatarFallback>{`${item?.name?.first} image`}</AvatarFallback>
+                                            </Avatar>
+                                            <p>{item?.name?.first}</p>{' '}
+                                            {/* Assuming 'item' has a 'name' property */}
+                                            <AiOutlineDelete
+                                                className="cursor-pointer text-rose-500 text-lg"
+                                                onClick={() =>
+                                                    handleDeleteClick(
+                                                        siteData?.site,
+                                                        item?._id
+                                                    )
+                                                }
+                                            />
+                                        </CommandItem>
+                                    ))}
+                                </React.Fragment>
                             ))}
-                    </CommandGroup>
+                        </CommandGroup>
+                    ) : (
+                        <CommandEmpty>No results found.</CommandEmpty>
+                    )}
                 </CommandList>
             </Command>
             <div className="flex items-center justify-between">

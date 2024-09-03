@@ -1,46 +1,62 @@
-import mongoose, { model, models } from 'mongoose';
-import UsersSchema from '@/app/api/v1/(users)/users.schema';
+import mongoose from 'mongoose';
+
 import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
-// Function to dynamically fetch model names from MongoDB
-async function getModelNames() {
-    await databaseService.connect();
-    const collections = await mongoose.connection.db
-        .listCollections()
-        .toArray();
-    return collections.map((collection) => collection.name);
-}
+// Function to fetch documents from all collections using MongoDB aggregation
+async function fetchAllDocumentsFromAllCollections() {
+    try {
+        console.debug('Connecting to database service');
+        await databaseService.connect();
 
-// Function to fetch all documents from a specific model
-async function fetchAllDocumentsFromModel(modelName) {
-    const dynamicModel =
-        models.modelName || model(modelName, UsersSchema, modelName); // Ensures no recompilation if the model already exists
-    return dynamicModel.find().lean(); // Use lean for performance if only JSON data is needed
+        console.debug('Getting all collection names');
+        const collections = await mongoose.connection.db
+            .listCollections()
+            .toArray();
+        const collectionNames = collections.map(
+            (collection) => collection.name
+        );
+
+        console.debug('Fetching users from all collections');
+        const results = await Promise.all(
+            collectionNames.map(async (collectionName) => {
+                const collection =
+                    mongoose.connection.db.collection(collectionName);
+                const documents = await collection
+                    .aggregate([
+                        // Here you can add any aggregation stages you need
+                        // For example: {$match: {}}, {$sort: {createdAt: -1}}
+                    ])
+                    .toArray();
+                return { site: collectionName, data: documents };
+            })
+        );
+
+        return results;
+    } catch (error) {
+        console.error('Error fetching documents from all collections:', error);
+        throw error;
+    }
 }
 
 export async function GET(request) {
+    console.debug('Fetching users from all collections');
+
     try {
-        console.debug('Fetching model names and their data');
-        const modelNames = await getModelNames();
-        const dataFetchPromises = modelNames.map((modelName) =>
-            fetchAllDocumentsFromModel(modelName)
-        );
-        const results = await Promise.all(dataFetchPromises);
-        const users = results.flat(); // Combine all users into a single array
+        const documentsFromAllCollections =
+            await fetchAllDocumentsFromAllCollections();
 
         return sendResponse(
             request,
             true,
             httpStatus.OK,
-            'Users fetched successfully from all models.',
-            users
+            'Users fetched successfully from all collections.',
+            documentsFromAllCollections
         );
     } catch (error) {
-        console.error('Error during operation:', error);
         return sendErrorResponse(request, error);
     }
 }

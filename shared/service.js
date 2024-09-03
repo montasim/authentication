@@ -65,10 +65,18 @@ const createOrUpdateDefaults = async (
     }
 };
 
-const getValuesFromRedis = async (request, redisKey, entityName) => {
-    console.debug(`Starting process to retrieve ${entityName}`);
+const getValuesFromRedis = async (
+    request,
+    redisKey,
+    searchParams,
+    entityName
+) => {
+    console.debug(
+        `Starting process to retrieve ${searchParams && Object.keys(searchParams).length > 0 ? 'filtered' : 'all'} ${entityName}`
+    );
 
     try {
+        console.debug('Query Parameters:', searchParams);
         const data = await redis.get(redisKey);
         if (!data) {
             console.error(`No ${entityName} data found in Redis.`);
@@ -82,13 +90,34 @@ const getValuesFromRedis = async (request, redisKey, entityName) => {
         }
 
         const values = JSON.parse(data);
-        console.debug(`Successfully retrieved ${entityName} from Redis.`);
+        let filteredValues = values;
+
+        // If there are search parameters, filter the values
+        if (Object.keys(searchParams).length > 0) {
+            filteredValues = values.filter((item) =>
+                Object.entries(searchParams).every(
+                    ([key, value]) =>
+                        item[key] && item[key].toString() === value.toString()
+                )
+            );
+
+            if (filteredValues.length === 0) {
+                return sendResponse(
+                    request,
+                    false,
+                    httpStatus.NOT_FOUND,
+                    `${toSentenceCase(entityName)} matching query not found`,
+                    {}
+                );
+            }
+        }
+
         return sendResponse(
             request,
             true,
             httpStatus.OK,
-            `${toSentenceCase(entityName)} retrieved successfully`,
-            values
+            `Successfully retrieved ${filteredValues.length > 0 ? 'filtered' : 'all'} ${entityName} from Redis.`,
+            filteredValues
         );
     } catch (error) {
         return sendErrorResponse(request, error);
@@ -223,6 +252,60 @@ const updateValueByIdInRedis = async (
             httpStatus.OK,
             `${sentenceCase} updated successfully`,
             entities[index]
+        );
+    } catch (error) {
+        return sendErrorResponse(request, error);
+    }
+};
+
+const getValuesByKeyFromRedis = async (
+    request,
+    redisKey,
+    searchParams,
+    entityName
+) => {
+    console.debug(`Starting process to retrieve filtered ${entityName}`);
+
+    try {
+        const data = await redis.get(redisKey);
+        if (!data) {
+            console.error(`No ${entityName} data found in Redis.`);
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} data found`,
+                {}
+            );
+        }
+
+        const values = JSON.parse(data);
+        // Filter values based on searchParams
+        const filteredValues = values.filter((item) =>
+            Object.entries(searchParams).every(
+                ([key, value]) => item[key] && item[key] === value
+            )
+        );
+
+        if (filteredValues.length === 0) {
+            return sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `${toSentenceCase(entityName)} matching query not found`,
+                {}
+            );
+        }
+
+        console.debug(
+            `Successfully retrieved filtered ${entityName} from Redis.`
+        );
+        return sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${toSentenceCase(entityName)} retrieved successfully`,
+            filteredValues
         );
     } catch (error) {
         return sendErrorResponse(request, error);
@@ -442,6 +525,7 @@ const service = {
     getValuesFromRedis,
     deleteValuesFromRedis,
     getValueByIdFromRedis,
+    getValuesByKeyFromRedis,
     updateValueByIdInRedis,
     deleteValueByIdFromRedis,
     createOrUpdateSetValuesToRedis,
