@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MdBarChart, MdSpaceDashboard } from 'react-icons/md';
-import { PiDeviceTabletFill } from 'react-icons/pi';
+import { PiDeviceTabletFill, PiUsersThreeFill } from 'react-icons/pi';
 import { IoLinkSharp } from 'react-icons/io5';
 import {
     RiLockPasswordFill,
@@ -12,7 +12,7 @@ import {
     RiMailForbidFill,
 } from 'react-icons/ri';
 import { TbBracketsContain, TbGridPattern } from 'react-icons/tb';
-import { FaCloudUploadAlt, FaImage } from 'react-icons/fa';
+import { FaCloudUploadAlt, FaImage, FaUsers } from 'react-icons/fa';
 import { GrMultimedia } from 'react-icons/gr';
 
 export default function SideBar() {
@@ -137,6 +137,16 @@ export default function SideBar() {
                             </span>
 
                             <span className="">Upload</span>
+                        </p>
+                    </Link>
+
+                    <Link href="/users">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <PiUsersThreeFill />
+                            </span>
+
+                            <span className="">Users</span>
                         </p>
                     </Link>
                 </div>

@@ -1,6 +1,6 @@
 import { model, models } from 'mongoose';
 
-import usersSchema from '@/app/api/v1/(users)/users.model.js';
+import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';

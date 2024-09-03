@@ -1,7 +1,7 @@
 import { model, models } from 'mongoose';
 import moment from 'moment';
 
-import usersSchema from '@/app/api/v1/(users)/users.model.js';
+import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import databaseService from '@/service/database.service.js';
