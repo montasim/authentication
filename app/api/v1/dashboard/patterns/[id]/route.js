@@ -1,7 +1,7 @@
 import service from '@/shared/service';
 
 export const GET = async (request, context) => {
-    return service.getValueByIdFromRedis(
+    return await service.getValueByIdFromRedis(
         request,
         context,
         'patterns',
@@ -10,7 +10,7 @@ export const GET = async (request, context) => {
 };
 
 export const PUT = async (request, context) => {
-    return service.updateValueByIdInRedis(
+    return await service.updateValueByIdInRedis(
         request,
         context,
         'patterns',
@@ -19,7 +19,7 @@ export const PUT = async (request, context) => {
 };
 
 export const DELETE = async (request, context) => {
-    return service.deleteValueByIdFromRedis(
+    return await service.deleteValueByIdFromRedis(
         request,
         context,
         'patterns',

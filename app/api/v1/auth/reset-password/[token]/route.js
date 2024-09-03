@@ -13,7 +13,6 @@ import validatePassword from '@/utilities/validatePassword.js';
 import createHashedPassword from '@/utilities/createHashedPassword.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import getModelName from '@/utilities/getModelName';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 const sendResetConfirmationEmail = async (user) => {
@@ -79,9 +78,6 @@ export const PUT = async (request, context) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(
             `Received user data: ${JSON.stringify(userData.siteName)}`
@@ -89,7 +85,7 @@ export const PUT = async (request, context) => {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -114,7 +110,7 @@ export const PUT = async (request, context) => {
         });
 
         if (!user) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -123,7 +119,7 @@ export const PUT = async (request, context) => {
         }
 
         if (!user.emails.find((email) => email.isPrimaryEmail)) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.UNPROCESSABLE_ENTITY,
@@ -138,7 +134,7 @@ export const PUT = async (request, context) => {
             user.passwordHash
         );
         if (!isPasswordValid) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -148,7 +144,7 @@ export const PUT = async (request, context) => {
 
         console.debug('Validating new passwords for match and strength');
         if (userData.newPassword !== userData.confirmNewPassword) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -160,7 +156,7 @@ export const PUT = async (request, context) => {
             userData.newPassword
         );
         if (passwordValidationResult !== 'Valid') {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -177,19 +173,13 @@ export const PUT = async (request, context) => {
         await user.save();
         await sendResetConfirmationEmail(user);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'Your password has been reset successfully.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

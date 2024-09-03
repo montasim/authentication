@@ -11,7 +11,6 @@ import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import incrementUse from '@/utilities/incrementUse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
@@ -46,14 +45,11 @@ export const POST = async (request, context) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const { params } = context;
         const id = params.id;
 
         if (!id) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -68,7 +64,7 @@ export const POST = async (request, context) => {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -83,7 +79,7 @@ export const POST = async (request, context) => {
         console.debug(`Looking up user with ID: ${id}`);
         const userDetails = await UsersModel.findById(id);
         if (!userDetails) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -96,7 +92,7 @@ export const POST = async (request, context) => {
             (email) => email.isPrimaryEmail
         );
         if (!primaryEmail) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -106,7 +102,7 @@ export const POST = async (request, context) => {
 
         // Check if email is already verified
         if (primaryEmail.isEmailVerified) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -164,19 +160,13 @@ export const POST = async (request, context) => {
         );
         console.debug('Email sent successfully');
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'Verification email sent successfully.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

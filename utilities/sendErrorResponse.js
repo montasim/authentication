@@ -1,11 +1,19 @@
+import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants';
 import configuration from '@/configuration/configuration';
 
 import sendResponse from '@/utilities/sendResponse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import incrementUse from '@/utilities/incrementUse';
 
-const sendErrorResponse = (request, error) =>
-    sendResponse(
+const sendErrorResponse = async (request, error) => {
+    console.debug('Connecting to database service');
+    await databaseService.connect();
+
+    console.debug('Incrementing authentication module usage');
+    await incrementUse();
+
+    return await sendResponse(
         request,
         false,
         httpStatus.INTERNAL_SERVER_ERROR,
@@ -13,5 +21,6 @@ const sendErrorResponse = (request, error) =>
             ? error.message
             : 'Internal Server Error.'
     );
+};
 
 export default sendErrorResponse;

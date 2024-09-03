@@ -49,7 +49,7 @@ export async function GET(request) {
         const documentsFromAllCollections =
             await fetchAllDocumentsFromAllCollections();
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -57,6 +57,6 @@ export async function GET(request) {
             documentsFromAllCollections
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 }

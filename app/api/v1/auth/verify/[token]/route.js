@@ -10,7 +10,6 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import getModelName from '@/utilities/getModelName';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -42,9 +41,6 @@ export async function POST(request, context) {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(
             `Received user data: ${JSON.stringify(userData.siteName)}`
@@ -52,7 +48,7 @@ export async function POST(request, context) {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -76,7 +72,7 @@ export async function POST(request, context) {
             'emails.emailVerifyToken': hashedToken,
         });
         if (!user) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -89,7 +85,7 @@ export async function POST(request, context) {
             (email) => email.emailVerifyToken === hashedToken
         );
         if (!emailDetails) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -99,14 +95,14 @@ export async function POST(request, context) {
 
         // Check if the email has already been verified or if the token has expired
         if (emailDetails.isEmailVerified) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
                 'This email has already been verified. No further action is required.'
             );
         } else if (emailDetails.emailVerifyTokenExpires < Date.now()) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -127,7 +123,7 @@ export async function POST(request, context) {
         );
 
         if (updateResult.modifiedCount !== 1) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.INTERNAL_SERVER_ERROR,
@@ -166,19 +162,13 @@ export async function POST(request, context) {
             )
         );
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'Email has been successfully verified.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 }

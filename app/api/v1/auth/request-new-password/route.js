@@ -11,7 +11,6 @@ import generateVerificationToken from '@/utilities/generateVerificationToken.js'
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
@@ -44,15 +43,12 @@ export const PUT = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(`Received user data: ${JSON.stringify(userData)}`);
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -73,7 +69,7 @@ export const PUT = async (request) => {
             'emails.isEmailVerified': true,
         }).lean();
         if (!user) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -83,7 +79,7 @@ export const PUT = async (request) => {
 
         const primaryEmail = user.emails.find((e) => e.isPrimaryEmail);
         if (!primaryEmail) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -136,19 +132,13 @@ export const PUT = async (request) => {
 
         console.debug('Password reset email sent successfully');
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'Password reset email sent successfully.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

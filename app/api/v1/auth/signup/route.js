@@ -15,7 +15,6 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import incrementUse from '@/utilities/incrementUse';
 import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
@@ -48,9 +47,6 @@ export const POST = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(
             `Received user data: ${JSON.stringify(userData.siteName)}`
@@ -58,7 +54,7 @@ export const POST = async (request) => {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -94,7 +90,7 @@ export const POST = async (request) => {
             'emails.email': userData.email,
         }).lean();
         if (existingUser) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.CONFLICT,
@@ -105,7 +101,7 @@ export const POST = async (request) => {
         console.debug('Validating email address:', userData.email);
         const emailValidationResult = await validateEmail(userData.email);
         if (emailValidationResult !== 'Valid') {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -115,7 +111,7 @@ export const POST = async (request) => {
 
         console.debug('Matching passwords');
         if (userData.password !== userData.confirmPassword) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -128,7 +124,7 @@ export const POST = async (request) => {
             userData.password
         );
         if (passwordValidationResult !== 'Valid') {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -138,7 +134,7 @@ export const POST = async (request) => {
 
         console.debug('Validate and convert dateOfBirth using moment');
         if (!moment(userData.dateOfBirth, 'DD-MM-YYYY', true).isValid()) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -220,19 +216,13 @@ export const POST = async (request) => {
             )
         );
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.CREATED,
             'User registered successfully. Please check your email for verification instructions.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
