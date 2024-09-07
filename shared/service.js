@@ -51,9 +51,8 @@ const createOrUpdateDefaults = async (
 
         console.debug(`Saving updated ${entityName} back to Redis`);
         await redis.set(redisKey, JSON.stringify(entities));
-        console.debug(`Successfully updated ${entityName} in Redis.`);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -61,7 +60,7 @@ const createOrUpdateDefaults = async (
             entities
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -69,10 +68,14 @@ const getValuesFromRedis = async (request, redisKey, entityName) => {
     console.debug(`Starting process to retrieve ${entityName}`);
 
     try {
+        const url = new URL(request.url);
+        const queryParams = Object.fromEntries(url.searchParams.entries());
+
+        console.debug('Query Parameters:', queryParams);
         const data = await redis.get(redisKey);
         if (!data) {
             console.error(`No ${entityName} data found in Redis.`);
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -82,16 +85,37 @@ const getValuesFromRedis = async (request, redisKey, entityName) => {
         }
 
         const values = JSON.parse(data);
-        console.debug(`Successfully retrieved ${entityName} from Redis.`);
-        return sendResponse(
+        let filteredValues = values;
+
+        // If there are search parameters, filter the values
+        if (Object.keys(queryParams).length > 0) {
+            filteredValues = values.filter((item) =>
+                Object.entries(queryParams).every(
+                    ([key, value]) =>
+                        item[key] && item[key].toString() === value.toString()
+                )
+            );
+
+            if (filteredValues.length === 0) {
+                return await sendResponse(
+                    request,
+                    false,
+                    httpStatus.NOT_FOUND,
+                    `${toSentenceCase(entityName)} matching query not found`,
+                    {}
+                );
+            }
+        }
+
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
-            `${toSentenceCase(entityName)} retrieved successfully`,
-            values
+            `Successfully retrieved ${filteredValues.length > 0 ? 'filtered' : 'all'} ${entityName} from Redis.`,
+            filteredValues
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -102,7 +126,7 @@ const deleteValuesFromRedis = async (request, redisKey, entityName) => {
         const data = await redis.get(redisKey);
         if (!data) {
             console.error(`No ${entityName} data found in Redis.`);
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -115,14 +139,14 @@ const deleteValuesFromRedis = async (request, redisKey, entityName) => {
         await redis.del(redisKey);
         console.debug(`Deleted all ${entityName} from Redis.`);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             `All ${entityName} deleted successfully`
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -149,7 +173,7 @@ const getValueByIdFromRedis = async (
         if (index === -1) {
             sentenceCase = toSentenceCase(entityName.slice(0, -1));
             console.warn(`${sentenceCase} not found for ID: ${id}`);
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -158,10 +182,7 @@ const getValueByIdFromRedis = async (
         }
 
         sentenceCase = toSentenceCase(entityName.slice(0, -1));
-        console.debug(
-            `${sentenceCase} retrieved successfully from Redis: ${id}`
-        );
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -169,7 +190,7 @@ const getValueByIdFromRedis = async (
             entities[index]
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -200,7 +221,7 @@ const updateValueByIdInRedis = async (
         if (index === -1) {
             sentenceCase = toSentenceCase(entityName.slice(0, -1));
             console.warn(`${entityName.slice(0, -1)} not found for ID: ${id}`);
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -217,7 +238,7 @@ const updateValueByIdInRedis = async (
         sentenceCase = toSentenceCase(entityName.slice(0, -1));
         console.debug(`${sentenceCase} updated successfully in Redis: ${id}`);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -225,7 +246,61 @@ const updateValueByIdInRedis = async (
             entities[index]
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
+    }
+};
+
+const getValuesByKeyFromRedis = async (
+    request,
+    redisKey,
+    searchParams,
+    entityName
+) => {
+    console.debug(`Starting process to retrieve filtered ${entityName}`);
+
+    try {
+        const data = await redis.get(redisKey);
+        if (!data) {
+            console.error(`No ${entityName} data found in Redis.`);
+            return await sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `No ${entityName} data found`,
+                {}
+            );
+        }
+
+        const values = JSON.parse(data);
+        // Filter values based on searchParams
+        const filteredValues = values.filter((item) =>
+            Object.entries(searchParams).every(
+                ([key, value]) => item[key] && item[key] === value
+            )
+        );
+
+        if (filteredValues.length === 0) {
+            return await sendResponse(
+                request,
+                false,
+                httpStatus.NOT_FOUND,
+                `${toSentenceCase(entityName)} matching query not found`,
+                {}
+            );
+        }
+
+        console.debug(
+            `Successfully retrieved filtered ${entityName} from Redis.`
+        );
+        return await sendResponse(
+            request,
+            true,
+            httpStatus.OK,
+            `${toSentenceCase(entityName)} retrieved successfully`,
+            filteredValues
+        );
+    } catch (error) {
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -255,7 +330,7 @@ const deleteValueByIdFromRedis = async (
             `Deleted ${entityName.slice(0, -1)} from Redis: ${id}, affected count: ${originalCount - entities.length}`
         );
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -263,7 +338,7 @@ const deleteValueByIdFromRedis = async (
             entities
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -287,7 +362,7 @@ const createOrUpdateSetValuesToRedis = async (
             console.log(`${entityName} loaded into Redis`);
         }
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -295,7 +370,7 @@ const createOrUpdateSetValuesToRedis = async (
             domains
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -308,14 +383,14 @@ const addNewSetValuesToRedis = async (request, redisKey, key, entityName) => {
         const sentenceCase = toSentenceCase(entityName);
         console.debug(`${sentenceCase} added to Redis, Result: ${result}`);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             `${sentenceCase} added successfully.`
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -326,7 +401,7 @@ const getSetValuesFromRedis = async (request, redisKey, entityName) => {
         const data = await redis.smembers(redisKey);
         if (!data) {
             console.error(`No ${entityName} data found in Redis.`);
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -335,8 +410,7 @@ const getSetValuesFromRedis = async (request, redisKey, entityName) => {
             );
         }
 
-        console.debug(`Successfully retrieved ${entityName} from Redis.`);
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -344,7 +418,7 @@ const getSetValuesFromRedis = async (request, redisKey, entityName) => {
             data
         );
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -358,7 +432,7 @@ const checkSetValueInRedis = async (request, redisKey, data, entityName) => {
 
         // Respond based on the existence of the domain
         if (exists === 1) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.OK,
@@ -366,7 +440,7 @@ const checkSetValueInRedis = async (request, redisKey, data, entityName) => {
                 { exists: true }
             );
         } else {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.OK,
@@ -375,7 +449,7 @@ const checkSetValueInRedis = async (request, redisKey, data, entityName) => {
             );
         }
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -389,14 +463,14 @@ const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
 
         // Check if to delete was successful
         if (result === 1) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.OK,
                 `All ${entityName} have been successfully deleted.`
             );
         } else {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.NOT_FOUND,
@@ -404,7 +478,7 @@ const deleteSetValuesFromRedis = async (request, redisKey, entityName) => {
             );
         }
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -418,14 +492,14 @@ const deleteSetValueFromRedis = async (request, redisKey, data, entityName) => {
 
         // Respond based on the result of the removal
         if (removed === 1) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.OK,
                 `${entityName} successfully removed from the blocked list.`
             );
         } else {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 true,
                 httpStatus.NOT_FOUND,
@@ -433,7 +507,7 @@ const deleteSetValueFromRedis = async (request, redisKey, data, entityName) => {
             );
         }
     } catch (error) {
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };
 
@@ -442,6 +516,7 @@ const service = {
     getValuesFromRedis,
     deleteValuesFromRedis,
     getValueByIdFromRedis,
+    getValuesByKeyFromRedis,
     updateValueByIdInRedis,
     deleteValueByIdFromRedis,
     createOrUpdateSetValuesToRedis,

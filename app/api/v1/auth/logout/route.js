@@ -2,7 +2,6 @@ import databaseService from '@/service/database.service';
 import httpStatus from '@/constants/httpStatus.constants.js';
 
 import sendResponse from '@/utilities/sendResponse.js';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -31,16 +30,13 @@ export const GET = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         console.debug('Extracting authorization header');
         const authHeader = request?.headers.get('authorization');
         const jwtToken = authHeader?.startsWith('Bearer ')
             ? authHeader.substring(7)
             : null;
         if (!jwtToken) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.UNAUTHORIZED,
@@ -57,19 +53,13 @@ export const GET = async (request) => {
         // Assuming you have a function to handle token invalidation
         // await invalidateToken(jwtToken);
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'You have been logged out successfully.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

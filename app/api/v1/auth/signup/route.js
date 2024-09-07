@@ -6,6 +6,7 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import databaseService from '@/service/database.service.js';
 import EmailService from '@/service/email.service.js';
+import serverApiCall from '@/utilities/axios.server';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -15,9 +16,6 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import incrementUse from '@/utilities/incrementUse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
-import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -48,9 +46,6 @@ export const POST = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(
             `Received user data: ${JSON.stringify(userData.siteName)}`
@@ -58,7 +53,7 @@ export const POST = async (request) => {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -94,7 +89,7 @@ export const POST = async (request) => {
             'emails.email': userData.email,
         }).lean();
         if (existingUser) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.CONFLICT,
@@ -105,7 +100,7 @@ export const POST = async (request) => {
         console.debug('Validating email address:', userData.email);
         const emailValidationResult = await validateEmail(userData.email);
         if (emailValidationResult !== 'Valid') {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -115,7 +110,7 @@ export const POST = async (request) => {
 
         console.debug('Matching passwords');
         if (userData.password !== userData.confirmPassword) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -128,7 +123,7 @@ export const POST = async (request) => {
             userData.password
         );
         if (passwordValidationResult !== 'Valid') {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -138,7 +133,7 @@ export const POST = async (request) => {
 
         console.debug('Validate and convert dateOfBirth using moment');
         if (!moment(userData.dateOfBirth, 'DD-MM-YYYY', true).isValid()) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -162,13 +157,23 @@ export const POST = async (request) => {
             emailVerifyTokenExpires,
         };
 
+        const [defaultGenderImage, environmentNameProduction] =
+            await Promise.all([
+                serverApiCall.getData(
+                    '/api/v1/dashboard/default/gender-images?name=OTHER'
+                ),
+                serverApiCall.getData(
+                    '/api/v1/dashboard/environments?name=PRODUCTION'
+                ),
+            ]);
+
         console.debug('Saving new user data');
         const newUser = await UsersModel.create({
             name: {
                 first: userData.name,
             },
             image: {
-                downloadLink: getDefaultValueByName('MALE'),
+                downloadLink: await defaultGenderImage.data[0].value,
             },
             emails: [emailObject],
             dateOfBirth,
@@ -184,9 +189,12 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (configuration.env === getEnvironmentByName('PRODUCTION')) {
-            emailVerificationLink = `https://${hostname}/api/v1/auth/verify/${plainToken}`;
-            resendEmailVerificationLink = `https://${hostname}/api/v1/auth/resend-verification/${newUser._id}`;
+        if (
+            configuration.env ===
+            (await environmentNameProduction.data[0].value)
+        ) {
+            emailVerificationLink = `https://${hostname}/auth/verify/${plainToken}?t=s`;
+            resendEmailVerificationLink = `https://${hostname}/auth/verify/${newUser._id}`;
         } else {
             emailVerificationLink = `http://${hostname}:${configuration.port}/api/v1/auth/verify/${plainToken}`;
             resendEmailVerificationLink = `http://${hostname}:${configuration.port}/api/v1/auth/resend-verification/${newUser._id}`;
@@ -220,19 +228,13 @@ export const POST = async (request) => {
             )
         );
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.CREATED,
             'User registered successfully. Please check your email for verification instructions.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

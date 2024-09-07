@@ -11,7 +11,6 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import createAuthenticationToken from '@/utilities/createAuthenticationToken.js';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -42,9 +41,6 @@ export const POST = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(
             `Received user data: ${JSON.stringify(userData.siteName)}`
@@ -52,7 +48,7 @@ export const POST = async (request) => {
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -69,7 +65,7 @@ export const POST = async (request) => {
             'emails.email': userData.email,
         }).lean();
         if (!user) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -77,7 +73,7 @@ export const POST = async (request) => {
             );
         }
         if (!user.isActive) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -89,7 +85,7 @@ export const POST = async (request) => {
             (email) => email.isPrimaryEmail && email.isEmailVerified
         );
         if (!isEmailVerified) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -98,7 +94,7 @@ export const POST = async (request) => {
         }
 
         if (!user.passwordHash || user.mustChangePassword) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -124,7 +120,7 @@ export const POST = async (request) => {
                 }
             );
 
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.FORBIDDEN,
@@ -170,7 +166,7 @@ export const POST = async (request) => {
             prepareEmail(emailContent)
         );
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -178,12 +174,6 @@ export const POST = async (request) => {
             { ...user, token }
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

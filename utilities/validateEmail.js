@@ -6,9 +6,7 @@
  * blocked and temporary email domains.
  */
 
-import patterns from '@/constants/patterns.constants.js';
-
-import loadListFromFile from '@/utilities/loadListFromFile.js';
+import serverApiCall from '@/utilities/axios.server';
 
 /**
  * validateEmail - An asynchronous function that validates an email address against various criteria.
@@ -23,31 +21,45 @@ import loadListFromFile from '@/utilities/loadListFromFile.js';
  * or an appropriate error message if it fails any check.
  */
 const validateEmail = async (email) => {
-    if (!patterns.EMAIL.test(email)) {
+    const domain = email.split('@')[1].toLowerCase();
+
+    // Execute API calls in parallel to reduce waiting time
+    const [
+        emailPatternResponse,
+        isBlockedDomainResponse,
+        isTemporaryDomainResponse,
+    ] = await Promise.all([
+        serverApiCall.getData('/api/v1/dashboard/patterns?name=EMAIL'),
+        serverApiCall.getData(
+            `/api/v1/dashboard/email/blocked-emails/${domain}`
+        ),
+        serverApiCall.getData(
+            `/api/v1/dashboard/email/temporary-emails/${domain}`
+        ), // Seems like the same endpoint, confirm if needed
+    ]);
+
+    // Validate the email pattern
+    const emailRegex = new RegExp(await emailPatternResponse.data[0].value);
+    if (!emailRegex.test(email)) {
         return 'Email must be a valid email';
     }
 
-    const domain = email.split('@')[1].toLowerCase();
-
-    const blockedEmailDomains = await loadListFromFile(
-        '../vendor/blockedEmailDomains.txt'
-    );
-    if (blockedEmailDomains.has(domain)) {
+    // Check if the domain is blocked
+    if (await isBlockedDomainResponse?.data?.exists) {
         return 'Email services is not allowed';
     }
 
-    const tempEmailDomains = await loadListFromFile(
-        '../vendor/temporaryEmailDomains.txt'
-    );
-    if (tempEmailDomains.has(domain)) {
+    // Check if it's a temporary domain
+    if (await isTemporaryDomainResponse?.data?.exists) {
         return 'Use of temporary email services is not allowed';
     }
 
+    // Check if the email contains "+number"
     if (email.split('@')[0].match(/\+\d+$/)) {
         return 'Emails with a "+number" pattern are not allowed';
     }
 
-    return 'Valid'; // Return 'Valid' if all checks are passed
+    return 'Valid'; // Return 'Valid' if all checks pass
 };
 
 export default validateEmail;

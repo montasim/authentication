@@ -150,6 +150,7 @@ const usersSchema = new Schema(
         appearance: sharedSchema.appearanceSchema,
 
         isActive: sharedSchema.isActiveSchema,
+        // isVerified: sharedSchema.isActiveSchema,
         // TODO: create a system to initialy create a new user
         createdBy: sharedSchema.createdByAdminSchema,
         // TODO: create a system to update user data with limited access

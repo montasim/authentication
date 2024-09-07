@@ -27,7 +27,7 @@ export async function GET(request) {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
@@ -35,9 +35,6 @@ export async function GET(request) {
             await UsesModel.findOne()
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 }

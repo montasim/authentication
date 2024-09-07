@@ -13,7 +13,7 @@ import {
 } from 'react-icons/ri';
 import { TbBracketsContain, TbGridPattern } from 'react-icons/tb';
 import { FaCloudUploadAlt, FaImage, FaUsers } from 'react-icons/fa';
-import { GrMultimedia } from 'react-icons/gr';
+import { GrMultimedia, GrStatusCriticalSmall } from 'react-icons/gr';
 
 export default function SideBar() {
     return (
@@ -147,6 +147,16 @@ export default function SideBar() {
                             </span>
 
                             <span className="">Users</span>
+                        </p>
+                    </Link>
+
+                    <Link href="/account-status">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <GrStatusCriticalSmall />
+                            </span>
+
+                            <span className="">Account Status</span>
                         </p>
                     </Link>
                 </div>

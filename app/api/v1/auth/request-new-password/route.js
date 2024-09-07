@@ -5,15 +5,14 @@ import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import EmailService from '@/service/email.service.js';
+import serverApiCall from '@/utilities/axios.server';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
-import incrementUse from '@/utilities/incrementUse';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the password reset request process by generating a verification token and sending a password reset email.
@@ -44,15 +43,12 @@ export const PUT = async (request) => {
         console.debug('Connecting to database service');
         await databaseService.connect();
 
-        console.debug('Incrementing authentication module usage');
-        await incrementUse();
-
         const userData = await request.json();
         console.debug(`Received user data: ${JSON.stringify(userData)}`);
 
         const prepareModelName = getModelName(userData.siteName);
         if (!prepareModelName) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -73,7 +69,7 @@ export const PUT = async (request) => {
             'emails.isEmailVerified': true,
         }).lean();
         if (!user) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.NOT_FOUND,
@@ -83,7 +79,7 @@ export const PUT = async (request) => {
 
         const primaryEmail = user.emails.find((e) => e.isPrimaryEmail);
         if (!primaryEmail) {
-            return sendResponse(
+            return await sendResponse(
                 request,
                 false,
                 httpStatus.BAD_REQUEST,
@@ -109,10 +105,18 @@ export const PUT = async (request) => {
 
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
+
+        const [environmentNameProduction] = await Promise.all([
+            serverApiCall.getData(
+                '/api/v1/dashboard/environments?name=PRODUCTION'
+            ),
+        ]);
+
         const emailVerificationLink =
-            configuration.env === getEnvironmentByName('PRODUCTION')
-                ? `https://${hostname}/api/v1/auth/reset-password/${plainToken}`
-                : `http://${hostname}:3000/api/v1/auth/reset-password/${plainToken}`;
+            configuration.env ===
+            (await environmentNameProduction?.data[0]?.value)
+                ? `https://${hostname}/auth/verify/${plainToken}?t=rp`
+                : `http://${hostname}:3000/auth/verify/${plainToken}`;
 
         console.debug(
             'Email verification link constructed:',
@@ -136,19 +140,13 @@ export const PUT = async (request) => {
 
         console.debug('Password reset email sent successfully');
 
-        return sendResponse(
+        return await sendResponse(
             request,
             true,
             httpStatus.OK,
             'Password reset email sent successfully.'
         );
     } catch (error) {
-        console.debug('Connecting to database service');
-        await databaseService.connect();
-
-        console.debug('Incrementing authentication module usage despite error');
-        await incrementUse();
-
-        return sendErrorResponse(request, error);
+        return await sendErrorResponse(request, error);
     }
 };

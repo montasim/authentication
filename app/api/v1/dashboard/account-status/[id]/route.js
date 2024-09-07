@@ -4,8 +4,8 @@ export const GET = async (request, context) => {
     return await service.getValueByIdFromRedis(
         request,
         context,
-        'patterns',
-        'patterns'
+        'accountStatus',
+        'account status'
     );
 };
 
@@ -13,8 +13,8 @@ export const PUT = async (request, context) => {
     return await service.updateValueByIdInRedis(
         request,
         context,
-        'patterns',
-        'patterns'
+        'accountStatus',
+        'account status'
     );
 };
 
@@ -22,7 +22,7 @@ export const DELETE = async (request, context) => {
     return await service.deleteValueByIdFromRedis(
         request,
         context,
-        'patterns',
-        'patterns'
+        'accountStatus',
+        'account status'
     );
 };

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "account-status-pqrstuvwxyza",
+    "name": "ACTIVE",
+    "value": "active",
+    "description": ""
+  },
+  {
+    "id": "account-status-qrsuvwxyzab",
+    "name": "INACTIVE",
+    "value": "inactive",
+    "description": ""
+  },
+  {
+    "id": "account-status-rstuvwxyzac",
+    "name": "DELETED",
+    "value": "deleted",
+    "description": ""
+  },
+  {
+    "id": "account-status-stuvwxyzad",
+    "name": "RESTRICTED",
+    "value": "restricted",
+    "description": ""
+  }
+]

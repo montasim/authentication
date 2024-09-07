@@ -1,7 +1,7 @@
 import service from '@/shared/service';
 
 export const POST = async (request) => {
-    return service.createOrUpdateDefaults(
+    return await service.createOrUpdateDefaults(
         request,
         'contentTypes.json',
         'contentTypes',
@@ -10,11 +10,15 @@ export const POST = async (request) => {
 };
 
 export const GET = async (request) => {
-    return service.getValuesFromRedis(request, 'contentTypes', 'content types');
+    return await service.getValuesFromRedis(
+        request,
+        'contentTypes',
+        'content types'
+    );
 };
 
 export const DELETE = async (request) => {
-    return service.deleteValuesFromRedis(
+    return await service.deleteValuesFromRedis(
         request,
         'contentTypes',
         'content types'
