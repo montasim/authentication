@@ -5,13 +5,13 @@ import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
+import serverApiCall from '@/utilities/axios.server';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -135,8 +135,15 @@ export const POST = async (request, context) => {
 
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
+
+        const [environmentNameProduction] = await Promise.all([
+            serverApiCall.getData(
+                '/api/v1/dashboard/environments?name=PRODUCTION'
+            ),
+        ]);
+
         const emailVerificationLink =
-            configuration.env === getEnvironmentByName('PRODUCTION')
+            configuration.env === environmentNameProduction?.data[0]?.value
                 ? `https://${hostname}/api/v1/auth/verify-email/${plainToken}`
                 : `http://${hostname}:3000/api/v1/auth/verify-email/${plainToken}`;
         console.debug(

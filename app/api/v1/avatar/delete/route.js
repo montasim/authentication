@@ -17,7 +17,7 @@ export const DELETE = async (request) => {
             true,
             httpStatus.OK,
             'File deleted successfully.',
-            { deleteResult }
+            deleteResult
         );
     } catch (error) {
         return await sendErrorResponse(request, error);
