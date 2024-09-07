@@ -6,6 +6,7 @@ import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import databaseService from '@/service/database.service.js';
 import EmailService from '@/service/email.service.js';
+import serverApiCall from '@/utilities/axios.server';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
@@ -15,8 +16,6 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
-import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -158,13 +157,23 @@ export const POST = async (request) => {
             emailVerifyTokenExpires,
         };
 
+        const [defaultGenderImage, environmentNameProduction] =
+            await Promise.all([
+                serverApiCall.getData(
+                    '/api/v1/dashboard/default/gender-images?name=OTHER'
+                ),
+                serverApiCall.getData(
+                    '/api/v1/dashboard/environments?name=PRODUCTION'
+                ),
+            ]);
+
         console.debug('Saving new user data');
         const newUser = await UsersModel.create({
             name: {
                 first: userData.name,
             },
             image: {
-                downloadLink: getDefaultValueByName('MALE'),
+                downloadLink: defaultGenderImage.data[0].value,
             },
             emails: [emailObject],
             dateOfBirth,
@@ -180,7 +189,7 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (configuration.env === getEnvironmentByName('PRODUCTION')) {
+        if (configuration.env === environmentNameProduction.data[0].value) {
             emailVerificationLink = `https://${hostname}/api/v1/auth/verify/${plainToken}`;
             resendEmailVerificationLink = `https://${hostname}/api/v1/auth/resend-verification/${newUser._id}`;
         } else {
