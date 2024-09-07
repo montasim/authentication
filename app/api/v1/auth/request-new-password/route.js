@@ -115,8 +115,8 @@ export const PUT = async (request) => {
         const emailVerificationLink =
             configuration.env ===
             (await environmentNameProduction?.data[0]?.value)
-                ? `https://${hostname}/api/v1/auth/reset-password/${plainToken}`
-                : `http://${hostname}:3000/api/v1/auth/reset-password/${plainToken}`;
+                ? `https://${hostname}/auth/verify/${plainToken}?t=rp`
+                : `http://${hostname}:3000/auth/verify/${plainToken}`;
 
         console.debug(
             'Email verification link constructed:',

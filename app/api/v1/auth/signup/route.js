@@ -193,8 +193,8 @@ export const POST = async (request) => {
             configuration.env ===
             (await environmentNameProduction.data[0].value)
         ) {
-            emailVerificationLink = `https://${hostname}/api/v1/auth/verify/${plainToken}`;
-            resendEmailVerificationLink = `https://${hostname}/api/v1/auth/resend-verification/${newUser._id}`;
+            emailVerificationLink = `https://${hostname}/auth/verify/${plainToken}?t=s`;
+            resendEmailVerificationLink = `https://${hostname}/auth/verify/${newUser._id}`;
         } else {
             emailVerificationLink = `http://${hostname}:${configuration.port}/api/v1/auth/verify/${plainToken}`;
             resendEmailVerificationLink = `http://${hostname}:${configuration.port}/api/v1/auth/resend-verification/${newUser._id}`;
