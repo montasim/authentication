@@ -13,7 +13,7 @@ const sendErrorResponse = async (request, error) => {
         request,
         false,
         httpStatus.INTERNAL_SERVER_ERROR,
-        configuration.env !== environmentNameProduction?.data[0]?.value
+        configuration.env !== (await environmentNameProduction?.data[0]?.value)
             ? error.message
             : 'Internal Server Error.'
     );

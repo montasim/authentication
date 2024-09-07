@@ -30,13 +30,15 @@ const validatePassword = async (password) => {
         ]);
 
     // Validate the email pattern
-    const passwordRegex = new RegExp(passwordPatternResponse.data[0].value);
+    const passwordRegex = new RegExp(
+        await passwordPatternResponse.data[0].value
+    );
     if (!passwordRegex.test(password)) {
         return 'Password must be a valid password';
     }
 
     // Check if the password is in the Set of common passwords
-    if (isCommonPasswordResponse?.exists) {
+    if (await isCommonPasswordResponse?.data?.exists) {
         console.error(
             `Password "${password}" is found in the common passwords list.`
         );

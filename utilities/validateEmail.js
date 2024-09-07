@@ -34,23 +34,23 @@ const validateEmail = async (email) => {
             `/api/v1/dashboard/email/blocked-emails/${domain}`
         ),
         serverApiCall.getData(
-            `/api/v1/dashboard/email/blocked-emails/${domain}`
+            `/api/v1/dashboard/email/temporary-emails/${domain}`
         ), // Seems like the same endpoint, confirm if needed
     ]);
 
     // Validate the email pattern
-    const emailRegex = new RegExp(emailPatternResponse.data[0].value);
+    const emailRegex = new RegExp(await emailPatternResponse.data[0].value);
     if (!emailRegex.test(email)) {
         return 'Email must be a valid email';
     }
 
     // Check if the domain is blocked
-    if (isBlockedDomainResponse?.exists) {
+    if (await isBlockedDomainResponse?.data?.exists) {
         return 'Email services is not allowed';
     }
 
     // Check if it's a temporary domain
-    if (isTemporaryDomainResponse?.exists) {
+    if (await isTemporaryDomainResponse?.data?.exists) {
         return 'Use of temporary email services is not allowed';
     }
 

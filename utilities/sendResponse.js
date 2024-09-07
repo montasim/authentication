@@ -22,7 +22,7 @@ const sendResponse = async (
     const contentTypeResponse = await serverApiCall.getData(
         '/api/v1/dashboard/content-types?name=JSON'
     );
-    const contentType = contentTypeResponse.data[0].value;
+    const contentType = await contentTypeResponse.data[0].value;
 
     toString(status).startsWith('5')
         ? console.error(message)

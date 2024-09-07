@@ -173,7 +173,7 @@ export const POST = async (request) => {
                 first: userData.name,
             },
             image: {
-                downloadLink: defaultGenderImage.data[0].value,
+                downloadLink: await defaultGenderImage.data[0].value,
             },
             emails: [emailObject],
             dateOfBirth,
@@ -189,7 +189,10 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (configuration.env === environmentNameProduction.data[0].value) {
+        if (
+            configuration.env ===
+            (await environmentNameProduction.data[0].value)
+        ) {
             emailVerificationLink = `https://${hostname}/api/v1/auth/verify/${plainToken}`;
             resendEmailVerificationLink = `https://${hostname}/api/v1/auth/resend-verification/${newUser._id}`;
         } else {
