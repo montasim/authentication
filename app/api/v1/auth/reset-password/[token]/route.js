@@ -18,7 +18,7 @@ const sendResetConfirmationEmail = async (user) => {
     console.debug(
         `Sending reset confirmation email to ${user.emails.find((email) => email.isPrimaryEmail).email}`
     );
-    await axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+    axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
         email: user.emails.find((email) => email.isPrimaryEmail).email,
         subject: 'Reset Password Successful',
         userName: user?.name?.first,

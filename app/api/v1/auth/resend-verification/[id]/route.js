@@ -162,18 +162,15 @@ export const POST = async (request, context) => {
         );
 
         console.debug('Sending verification email');
-        await axios.post(
-            `${configuration.service.sendEmail}/api/v1/send-email`,
-            {
-                email: primaryEmail,
-                subject: 'Confirm Your Email Address',
-                userName: userDetails?.name?.first,
-                emailVerificationLink,
-                deviceType: 'IOS',
-                loginTime: new Date().toISOString(),
-                ipAddress: '1:1:1:1',
-            }
-        );
+        axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+            email: primaryEmail,
+            subject: 'Confirm Your Email Address',
+            userName: userDetails?.name?.first,
+            emailVerificationLink,
+            deviceType: 'IOS',
+            loginTime: new Date().toISOString(),
+            ipAddress: '1:1:1:1',
+        });
 
         return await sendResponse(
             request,

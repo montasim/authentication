@@ -133,18 +133,15 @@ export const PUT = async (request) => {
         );
 
         console.debug('Sending password reset email');
-        await axios.post(
-            `${configuration.service.sendEmail}/api/v1/send-email`,
-            {
-                email: primaryEmail.email,
-                subject: 'Reset Your Password',
-                userName: user?.name?.first,
-                emailVerificationLink,
-                deviceType: 'IOS',
-                loginTime: new Date().toISOString(),
-                ipAddress: '1:1:1:1',
-            }
-        );
+        axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+            email: primaryEmail.email,
+            subject: 'Reset Your Password',
+            userName: user?.name?.first,
+            emailVerificationLink,
+            deviceType: 'IOS',
+            loginTime: new Date().toISOString(),
+            ipAddress: '1:1:1:1',
+        });
 
         console.debug('Password reset email sent successfully');
 

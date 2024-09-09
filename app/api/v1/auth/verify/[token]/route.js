@@ -131,17 +131,14 @@ export async function POST(request, context) {
         }
 
         console.debug('Sending welcome email');
-        await axios.post(
-            `${configuration.service.sendEmail}/api/v1/send-email`,
-            {
-                email: userData.email.toLowerCase(),
-                subject: 'Welcome Email',
-                userName: user?.name?.first,
-                deviceType: 'IOS',
-                loginTime: new Date().toISOString(),
-                ipAddress: '1:1:1:1',
-            }
-        );
+        axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+            email: userData.email.toLowerCase(),
+            subject: 'Welcome Email',
+            userName: user?.name?.first,
+            deviceType: 'IOS',
+            loginTime: new Date().toISOString(),
+            ipAddress: '1:1:1:1',
+        });
 
         return await sendResponse(
             request,

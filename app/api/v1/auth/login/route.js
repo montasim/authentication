@@ -151,17 +151,14 @@ export const POST = async (request) => {
         );
         const primaryEmail = primaryEmailObj.email;
 
-        await axios.post(
-            `${configuration.service.sendEmail}/api/v1/send-email`,
-            {
-                email: primaryEmail,
-                subject: 'Login Successfully',
-                userName: user?.name?.first,
-                deviceType: 'IOS',
-                loginTime: new Date().toISOString(),
-                ipAddress: '1:1:1:1',
-            }
-        );
+        axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+            email: primaryEmail,
+            subject: 'Login Successfully',
+            userName: user?.name?.first,
+            deviceType: 'IOS',
+            loginTime: new Date().toISOString(),
+            ipAddress: '1:1:1:1',
+        });
 
         return await sendResponse(
             request,
