@@ -26,7 +26,7 @@ export default function AvatarUploadPage() {
 
     const fetchApiData = async () => {
         try {
-            const data = await getData('/api/v1/avatar/download');
+            const data = await getData('/api/v1/files/download');
 
             setFiles(data.data);
             setLoading(false);
@@ -47,7 +47,7 @@ export default function AvatarUploadPage() {
 
         if (file) {
             const uploadPromise = fetch(
-                `/api/v1/avatar/upload?filename=${file.name}`,
+                `/api/v1/files/upload?filename=${file.name}`,
                 {
                     method: 'POST',
                     body: file,
@@ -60,22 +60,22 @@ export default function AvatarUploadPage() {
                     if (result.ok) {
                         const response = await result.json();
                         console.log('File uploaded successfully:', response);
-                        await fetchApiData(); // Refresh the list after successful upload
+                        await fetchApiData(); // Refresh the list after successful files
                         return 'File uploaded successfully.';
                     } else {
-                        throw new Error('File upload failed.');
+                        throw new Error('File files failed.');
                     }
                 },
                 error: 'An error occurred while uploading the item.',
             });
         } else {
-            toast.error('No file selected for upload.');
+            toast.error('No file selected for files.');
         }
     };
 
     const handleDeleteClick = async (url) => {
         const deletedPromise = deleteData(
-            `/api/v1/avatar/delete?url=${url}`,
+            `/api/v1/files/delete?url=${url}`,
             ''
         );
 
