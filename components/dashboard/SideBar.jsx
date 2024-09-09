@@ -150,6 +150,16 @@ export default function SideBar() {
                         </p>
                     </Link>
 
+                    <Link href="/users/constants">
+                        <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
+                            <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
+                                <PiUsersThreeFill />
+                            </span>
+
+                            <span className="">Users Constants</span>
+                        </p>
+                    </Link>
+
                     <Link href="/account-status">
                         <p className="group flex space-x-2 items-center text-muted-foreground transition-colors hover:text-foreground">
                             <span className="hover:bg-primary hover:text-secondary w-8 h-8 flex items-center justify-center rounded-lg">
