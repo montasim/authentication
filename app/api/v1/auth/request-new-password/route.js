@@ -1,16 +1,14 @@
 import { model, models } from 'mongoose';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
-import EmailService from '@/service/email.service.js';
 import serverApiCall from '@/utilities/axios.server';
 
 import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 import getDataByCriteria from '@/utilities/getDataByCriteria';
@@ -134,19 +132,18 @@ export const PUT = async (request) => {
             emailVerificationLink
         );
 
-        console.debug('Preparing email content for password reset');
-        const emailContent = prepareEmailContent('Reset Your Password', {
-            link: emailVerificationLink,
-        });
-
-        console.debug('Connecting to email service');
-        await EmailService.connect();
-
         console.debug('Sending password reset email');
-        await EmailService.sendEmail(
-            primaryEmail.email,
-            'Reset Your Password',
-            prepareEmail(emailContent)
+        await axios.post(
+            `${configuration.service.sendEmail}/api/v1/send-email`,
+            {
+                email: primaryEmail.email,
+                subject: 'Reset Your Password',
+                userName: user?.name?.first,
+                emailVerificationLink,
+                deviceType: 'IOS',
+                loginTime: new Date().toISOString(),
+                ipAddress: '1:1:1:1',
+            }
         );
 
         console.debug('Password reset email sent successfully');

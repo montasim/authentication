@@ -1,13 +1,12 @@
 import { model, models } from 'mongoose';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import EmailService from '@/service/email.service.js';
+import configuration from '@/configuration/configuration';
 
 import sendResponse from '@/utilities/sendResponse.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import getModelName from '@/utilities/getModelName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
@@ -131,35 +130,17 @@ export async function POST(request, context) {
             );
         }
 
-        console.debug(
-            'User document updated successfully, sending welcome email'
-        );
-        const subject = 'Welcome Email';
-        const emailData = {
-            userName: user.name.first,
-        };
-        const {
-            pageTitle,
-            preheaderText,
-            heroSection,
-            mainSection,
-            footerContent,
-        } = prepareEmailContent(subject, emailData);
-
-        console.debug('Connecting to email service');
-        await EmailService.connect();
-
-        console.debug(`Sending welcome email to ${emailDetails.email}`);
-        await EmailService.sendEmail(
-            emailDetails.email,
-            subject,
-            prepareEmail(
-                pageTitle,
-                preheaderText,
-                heroSection,
-                mainSection,
-                footerContent
-            )
+        console.debug('Sending welcome email');
+        await axios.post(
+            `${configuration.service.sendEmail}/api/v1/send-email`,
+            {
+                email: userData.email.toLowerCase(),
+                subject: 'Welcome Email',
+                userName: user?.name?.first,
+                deviceType: 'IOS',
+                loginTime: new Date().toISOString(),
+                ipAddress: '1:1:1:1',
+            }
         );
 
         return await sendResponse(
