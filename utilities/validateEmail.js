@@ -8,6 +8,8 @@
 
 import serverApiCall from '@/utilities/axios.server';
 
+import getDataByCriteria from '@/utilities/getDataByCriteria';
+
 /**
  * validateEmail - An asynchronous function that validates an email address against various criteria.
  * It checks if the email format is valid, ensures the email domain is not blocked or temporary, and
@@ -25,11 +27,13 @@ const validateEmail = async (email) => {
 
     // Execute API calls in parallel to reduce waiting time
     const [
-        emailPatternResponse,
+        emailPatternApiResponse,
+        emailPatternDefaultResponse,
         isBlockedDomainResponse,
         isTemporaryDomainResponse,
     ] = await Promise.all([
         serverApiCall.getData('/api/v1/dashboard/patterns?name=EMAIL'),
+        getDataByCriteria('patterns.json', 'name', 'EMAIL'),
         serverApiCall.getData(
             `/api/v1/dashboard/email/blocked-emails/${domain}`
         ),
@@ -39,7 +43,11 @@ const validateEmail = async (email) => {
     ]);
 
     // Validate the email pattern
-    const emailRegex = new RegExp(await emailPatternResponse.data[0].value);
+    let emailRegex = new RegExp(emailPatternDefaultResponse);
+    if (await emailPatternApiResponse?.data[0]?.value) {
+        emailRegex = new RegExp(emailPatternApiResponse?.data[0]?.value);
+    }
+
     if (!emailRegex.test(email)) {
         return 'Email must be a valid email';
     }

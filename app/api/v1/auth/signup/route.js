@@ -16,9 +16,8 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
-import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
+import getDataByCriteria from '@/utilities/getDataByCriteria';
 
 /**
  * Handles the user registration process, including validating the provided data, creating a new user, and sending a verification email.
@@ -159,13 +158,38 @@ export const POST = async (request) => {
             emailVerifyTokenExpires,
         };
 
+        const [
+            defaultGenderImageApiResponse,
+            defaultGenderImageDefaultResponse,
+            environmentNameApiResponse,
+            environmentNameDefaultResponse,
+        ] = await Promise.all([
+            serverApiCall.getData(
+                '/api/v1/dashboard/default/gender-images?name=OTHER'
+            ),
+            getDataByCriteria('defaultGenderImages.json', 'name', 'OTHER'),
+            serverApiCall.getData(
+                '/api/v1/dashboard/environments?name=PRODUCTION'
+            ),
+            getDataByCriteria('environments.json', 'name', 'PRODUCTION'),
+        ]);
+
+        let defaultGenderImageOther = new RegExp(
+            defaultGenderImageDefaultResponse
+        );
+        if (await defaultGenderImageApiResponse?.data[0]?.value) {
+            defaultGenderImageOther = new RegExp(
+                defaultGenderImageApiResponse?.data[0]?.value
+            );
+        }
+
         console.debug('Saving new user data');
         const newUser = await UsersModel.create({
             name: {
                 first: userData.name,
             },
             image: {
-                downloadLink: getDefaultValueByName('MALE'),
+                downloadLink: defaultGenderImageOther,
             },
             emails: [emailObject],
             dateOfBirth,
@@ -181,7 +205,16 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (configuration.env === getEnvironmentByName('PRODUCTION')) {
+        let environmentNameProduction = new RegExp(
+            environmentNameDefaultResponse
+        );
+        if (await environmentNameApiResponse?.data[0]?.value) {
+            environmentNameProduction = new RegExp(
+                environmentNameApiResponse?.data[0]?.value
+            );
+        }
+
+        if (configuration.env === environmentNameProduction) {
             emailVerificationLink = `https://${hostname}/auth/verify/${plainToken}?t=s`;
             resendEmailVerificationLink = `https://${hostname}/auth/verify/${newUser._id}`;
         } else {
