@@ -13,7 +13,7 @@ import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import getModelName from '@/utilities/getModelName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
-import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import getDataByCriteria from '@/utilities/getDataByCriteria';
 
 /**
  * Handles the password reset request process by generating a verification token and sending a password reset email.
@@ -107,8 +107,25 @@ export const PUT = async (request) => {
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
 
+        const [environmentNameApiResponse, environmentNameDefaultResponse] =
+            await Promise.all([
+                serverApiCall.getData(
+                    '/api/v1/dashboard/environments?name=PRODUCTION'
+                ),
+                getDataByCriteria('environments.json', 'name', 'PRODUCTION'),
+            ]);
+
+        let environmentNameProduction = new RegExp(
+            environmentNameDefaultResponse
+        );
+        if (await environmentNameApiResponse?.data[0]?.value) {
+            environmentNameProduction = new RegExp(
+                environmentNameApiResponse?.data[0]?.value
+            );
+        }
+
         const emailVerificationLink =
-            configuration.env === getEnvironmentByName('PRODUCTION')
+            configuration.env === environmentNameProduction
                 ? `https://${hostname}/auth/verify/${plainToken}?t=rp`
                 : `http://${hostname}:3000/auth/verify/${plainToken}`;
 

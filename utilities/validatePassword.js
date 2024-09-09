@@ -7,6 +7,8 @@
 
 import serverApiCall from '@/utilities/axios.server';
 
+import getDataByCriteria from '@/utilities/getDataByCriteria';
+
 /**
  * validatePassword - An asynchronous function that validates a password based on several criteria.
  * It checks if the password is between 8 and 20 characters, contains at least one uppercase letter,
@@ -21,18 +23,22 @@ import serverApiCall from '@/utilities/axios.server';
  */
 const validatePassword = async (password) => {
     // Execute API calls in parallel to reduce waiting time
-    const [passwordPatternResponse, isCommonPasswordResponse] =
-        await Promise.all([
-            serverApiCall.getData('/api/v1/dashboard/patterns?name=PASSWORD'),
-            serverApiCall.getData(
-                `/api/v1/dashboard/common-passwords/${password}`
-            ),
-        ]);
+    const [
+        passwordPatternApiResponse,
+        passwordPatternDefaultResponse,
+        isCommonPasswordResponse,
+    ] = await Promise.all([
+        serverApiCall.getData('/api/v1/dashboard/patterns?name=PASSWORD'),
+        getDataByCriteria('patterns.json', 'name', 'PASSWORD'),
+        serverApiCall.getData(`/api/v1/dashboard/common-passwords/${password}`),
+    ]);
 
-    // Validate the email pattern
-    const passwordRegex = new RegExp(
-        await passwordPatternResponse.data[0].value
-    );
+    // Validate the password pattern
+    let passwordRegex = new RegExp(passwordPatternDefaultResponse);
+    if (await passwordPatternApiResponse?.data[0]?.value) {
+        passwordRegex = new RegExp(passwordPatternApiResponse?.data[0]?.value);
+    }
+
     if (!passwordRegex.test(password)) {
         return 'Password must be a valid password';
     }

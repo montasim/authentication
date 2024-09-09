@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
 );
 
 const handleAxiosError = (error) => {
-    throw error;
+    return error;
 };
 
 const getData = async (endpoint) => {

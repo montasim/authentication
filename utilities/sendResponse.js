@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 import databaseService from '@/service/database.service';
 import serverApiCall from '@/utilities/axios.server';
 
-import getContentTypeByName from '@/utilities/getContentTypeByName';
 import incrementUse from '@/utilities/incrementUse';
+import getDataByCriteria from '@/utilities/getDataByCriteria';
 
 const sendResponse = async (
     request,
@@ -12,9 +12,7 @@ const sendResponse = async (
     status,
     message,
     data = {},
-    headers = {
-        'Content-Type': getContentTypeByName('JSON'),
-    }
+    headers = {}
 ) => {
     console.debug('Connecting to database service');
     await databaseService.connect();
@@ -35,10 +33,22 @@ const sendResponse = async (
         route: request.url,
     };
 
+    const [contentTypeApiResponse, contentTypeDefaultResponse] =
+        await Promise.all([
+            serverApiCall.getData('/api/v1/dashboard/content-types?name=JSON'),
+            getDataByCriteria('contentTypes.json', 'name', 'JSON'),
+        ]);
+
+    let contentType = new RegExp(contentTypeDefaultResponse);
+    if (await contentTypeApiResponse?.data[0]?.value) {
+        contentType = new RegExp(contentTypeApiResponse?.data[0]?.value);
+    }
+
     return new NextResponse(JSON.stringify(response), {
         status: response.status,
         headers: {
-            ...headers,
+            'Content-Type': contentType, // Set default Content-Type header
+            ...headers, // Override with provided headers if any
         },
     });
 };
