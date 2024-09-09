@@ -1,0 +1,8 @@
+[
+  {
+    "id": "user-image-file-size",
+    "name": "USER_IMAGE_FILE_SIZE",
+    "value": 1153433.6,
+    "description": "/**\n * Represents the maximum file size allowed for user image uploads.\n *\n * This limit is set to 1.1 MB (1.1 * 1024 * 1024), ensuring that the uploaded images are manageable in terms of storage and performance.\n */"
+  }
+]

@@ -16,14 +16,14 @@ import Spinner from '@/components/spinner/Spinner';
 import RenderRows from '@/components/dashboard/RenderRows';
 import { deleteData, getData, createData, updateData } from '@/utilities/axios';
 
-export default function Constants() {
+export default function Patterns() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingState, setEditingState] = useState({});
 
     const fetchApiData = async () => {
         try {
-            const data = await getData('/api/v1/dashboard/users/constants');
+            const data = await getData('/api/v1/dashboard/users/files-size');
 
             setData(data.data);
             setLoading(false);
@@ -47,7 +47,7 @@ export default function Constants() {
 
     const handleDeleteClick = async (id) => {
         const deletePromise = deleteData(
-            '/api/v1/dashboard/users/constants/',
+            '/api/v1/dashboard/users/files-size/',
             id
         );
 
@@ -80,7 +80,7 @@ export default function Constants() {
         const newDescription = editingState[id].description; // Assuming descriptions are also editable
 
         const savePromise = updateData(
-            `/api/v1/dashboard/users/constants/${id}`,
+            `/api/v1/dashboard/users/files-size/${id}`,
             {
                 value: newValue,
                 name: newName,
@@ -115,7 +115,7 @@ export default function Constants() {
 
     const handleResetToDefaultClick = async () => {
         const createDefaultPromise = createData(
-            `/api/v1/dashboard/users/constants`,
+            `/api/v1/dashboard/users/files-size`,
             {}
         );
 
@@ -144,7 +144,7 @@ export default function Constants() {
 
     const handleDeleteAllClick = async () => {
         const deletedPromise = deleteData(
-            `/api/v1/dashboard/users/constants`,
+            `/api/v1/dashboard/users/files-size`,
             ''
         );
 
@@ -195,8 +195,8 @@ export default function Constants() {
                 <Table>
                     <TableCaption>
                         {data.length
-                            ? 'A list of your used user constants variables.'
-                            : 'No user constants data found.'}
+                            ? 'A list of allowed user files size.'
+                            : 'No files size data found.'}
                     </TableCaption>
                     <TableHeader>
                         <TableRow>
