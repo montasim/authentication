@@ -1,13 +1,12 @@
 import { model, models } from 'mongoose';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import EmailService from '@/service/email.service.js';
+import configuration from '@/configuration/configuration';
 
 import sendResponse from '@/utilities/sendResponse.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import generateHashedToken from '@/utilities/generateHashedToken.js';
 import validatePassword from '@/utilities/validatePassword.js';
 import createHashedPassword from '@/utilities/createHashedPassword.js';
@@ -17,35 +16,16 @@ import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 const sendResetConfirmationEmail = async (user) => {
     console.debug(
-        `Preparing to send reset confirmation email to ${user.emails.find((email) => email.isPrimaryEmail).email}`
-    );
-    const subject = 'Reset Password Successful';
-    const emailData = { userName: user.name.first };
-    const {
-        pageTitle,
-        preheaderText,
-        heroSection,
-        mainSection,
-        footerContent,
-    } = prepareEmailContent(subject, emailData);
-
-    console.debug('Connecting to email service');
-    await EmailService.connect();
-
-    console.debug(
         `Sending reset confirmation email to ${user.emails.find((email) => email.isPrimaryEmail).email}`
     );
-    await EmailService.sendEmail(
-        user.emails.find((email) => email.isPrimaryEmail).email,
-        subject,
-        prepareEmail(
-            pageTitle,
-            preheaderText,
-            heroSection,
-            mainSection,
-            footerContent
-        )
-    );
+    await axios.post(`${configuration.service.sendEmail}/api/v1/send-email`, {
+        email: user.emails.find((email) => email.isPrimaryEmail).email,
+        subject: 'Reset Password Successful',
+        userName: user?.name?.first,
+        deviceType: 'IOS',
+        loginTime: new Date().toISOString(),
+        ipAddress: '1:1:1:1',
+    });
 };
 
 /**

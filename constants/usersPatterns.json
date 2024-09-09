@@ -1,0 +1,20 @@
+[
+  {
+    "id": "user-pattern-name",
+    "name": "USER_PATTERN_NAME",
+    "value": "/^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/",
+    "description": "/**\n * Represents the regular expression pattern for validating a person's name.\n *\n * The pattern enforces that the name starts with an uppercase letter followed by lowercase letters, with optional space-separated parts (each part also starting with an uppercase letter).\n */"
+  },
+  {
+    "id": "user-pattern-username",
+    "name": "USER_PATTERN_USERNAME",
+    "value": "/^[a-z][a-z0-9_]*$/",
+    "description": "/**\n * Represents the regular expression pattern for validating usernames.\n *\n * The pattern enforces that the username starts with a lowercase letter and may contain lowercase letters, numbers, and underscores.\n */"
+  },
+  {
+    "id": "user-pattern-date-of-birth",
+    "name": "USER_PATTERN_DATE_OF_BIRTH",
+    "value": "/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\\d{2}$/",
+    "description": "/**\n * Represents the regular expression pattern for validating a date of birth.\n *\n * The pattern enforces the DD-MM-YYYY format, where the day ranges from 01-31, the month from 01-12, and the year must be between 1900 and 2099.\n */"
+  }
+]

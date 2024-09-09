@@ -1,17 +1,15 @@
 import { model, models } from 'mongoose';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import EmailService from '@/service/email.service.js';
 import configuration from '@/configuration/configuration.js';
 import serverApiCall from '@/utilities/axios.server';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 import getDataByCriteria from '@/utilities/getDataByCriteria';
 
@@ -163,21 +161,19 @@ export const POST = async (request, context) => {
             emailVerificationLink
         );
 
-        console.debug('Preparing email content');
-        const emailContent = prepareEmailContent('Confirm Your Email Address', {
-            link: emailVerificationLink,
-        });
-
-        console.debug('Connecting to email service');
-        await EmailService.connect();
-
-        console.debug('Sending email verification');
-        await EmailService.sendEmail(
-            primaryEmail.email,
-            'Confirm Your Email Address',
-            prepareEmail(emailContent)
+        console.debug('Sending verification email');
+        await axios.post(
+            `${configuration.service.sendEmail}/api/v1/send-email`,
+            {
+                email: primaryEmail,
+                subject: 'Confirm Your Email Address',
+                userName: userDetails?.name?.first,
+                emailVerificationLink,
+                deviceType: 'IOS',
+                loginTime: new Date().toISOString(),
+                ipAddress: '1:1:1:1',
+            }
         );
-        console.debug('Email sent successfully');
 
         return await sendResponse(
             request,

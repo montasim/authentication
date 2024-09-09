@@ -80,6 +80,9 @@ const configuration = {
         confirmationTextForAccountDeletion:
             process.env.NEXT_PUBLIC_CONFIRMATION_TEXT_FOR_ACCOUNT_DELETION,
     },
+    service: {
+        sendEmail: process.env.NEXT_PUBLIC_SEND_EMAIL_SERVICE,
+    },
 };
 
 export default configuration;

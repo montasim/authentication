@@ -1,0 +1,98 @@
+[
+  {
+    "id": "user-constant-name-first-min",
+    "name": "USER_NAME_FIRST_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's first name.\n *\n * This limit ensures that first names are meaningful and have enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-name-first-max",
+    "name": "USER_NAME_FIRST_MAX",
+    "value": 16,
+    "description": "/**\n * Represents the maximum length allowed for the user's first name.\n *\n * This limit ensures that first names are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "user-constant-name-middle-min",
+    "name": "USER_NAME_MIDDLE_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's middle name.\n *\n * This limit ensures that middle names are meaningful and have enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-name-middle-max",
+    "name": "USER_NAME_MIDDLE_MAX",
+    "value": 16,
+    "description": "/**\n * Represents the maximum length allowed for the user's middle name.\n *\n * This limit ensures that middle names are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "user-constant-name-last-min",
+    "name": "USER_NAME_LAST_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's last name.\n *\n * This limit ensures that last names are meaningful and have enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-name-last-max",
+    "name": "USER_NAME_LAST_MAX",
+    "value": 16,
+    "description": "/**\n * Represents the maximum length allowed for the user's last name.\n *\n * This limit ensures that last names are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "user-constant-name-nick-min",
+    "name": "USER_NAME_NICK_MIN",
+    "value": 3,
+    "description": "/**\n * Represents the minimum length allowed for the user's nickname.\n *\n * This limit ensures that nicknames are meaningful and have enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-name-nick-max",
+    "name": "USER_NAME_NICK_MAX",
+    "value": 10,
+    "description": "/**\n * Represents the maximum length allowed for the user's nickname.\n *\n * This limit ensures that nicknames are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "user-constant-company-name-max",
+    "name": "USER_COMPANY_NAME_MAX",
+    "value": 50,
+    "description": "/**\n * Represents the maximum length allowed for the user's company name.\n *\n * This limit ensures compatibility with database constraints while allowing for sufficient detail in the company name.\n */"
+  },
+  {
+    "id": "user-constant-bio-max",
+    "name": "USER_BIO_MAX",
+    "value": 500,
+    "description": "/**\n * Represents the maximum length allowed for the user's biography.\n *\n * This limit ensures that bios are concise and manageable within the UI and database constraints.\n */"
+  },
+  {
+    "id": "user-constant-address-min",
+    "name": "USER_ADDRESS_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's address.\n *\n * This limit ensures that the address is meaningful and contains enough detail for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-address-max",
+    "name": "USER_ADDRESS_MAX",
+    "value": 200,
+    "description": "/**\n * Represents the maximum length allowed for the user's address.\n *\n * This limit ensures compatibility with database and UI constraints while allowing sufficient space for address details.\n */"
+  },
+  {
+    "id": "user-constant-department-min",
+    "name": "USER_DEPARTMENT_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's department name.\n *\n * This limit ensures that department names are meaningful and contain enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-department-max",
+    "name": "USER_DEPARTMENT_MAX",
+    "value": 100,
+    "description": "/**\n * Represents the maximum length allowed for the user's department name.\n *\n * This limit ensures that department names are not overly long, which could impact database storage and UI design.\n */"
+  },
+  {
+    "id": "user-constant-designation-min",
+    "name": "USER_DESIGNATION_MIN",
+    "value": 2,
+    "description": "/**\n * Represents the minimum length allowed for the user's designation.\n *\n * This limit ensures that designations are meaningful and contain enough characters for proper identification.\n */"
+  },
+  {
+    "id": "user-constant-designation-max",
+    "name": "USER_DESIGNATION_MAX",
+    "value": 100,
+    "description": "/**\n * Represents the maximum length allowed for the user's designation.\n *\n * This limit ensures that designations are not overly long, which could impact database storage and UI design.\n */"
+  }
+]

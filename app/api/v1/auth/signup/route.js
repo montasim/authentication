@@ -1,11 +1,11 @@
 import { model, models } from 'mongoose';
 import moment from 'moment';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
 import configuration from '@/configuration/configuration.js';
 import databaseService from '@/service/database.service.js';
-import EmailService from '@/service/email.service.js';
 import serverApiCall from '@/utilities/axios.server';
 
 import getModelName from '@/utilities/getModelName';
@@ -14,8 +14,6 @@ import validateEmail from '@/utilities/validateEmail.js';
 import validatePassword from '@/utilities/validatePassword.js';
 import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 import getDataByCriteria from '@/utilities/getDataByCriteria';
 
@@ -198,7 +196,6 @@ export const POST = async (request) => {
         console.debug('User data saved successfully');
 
         console.debug('Preparing email content for verification');
-        const subject = 'Confirm Your Email Address';
         let emailVerificationLink;
         let resendEmailVerificationLink;
 
@@ -222,32 +219,19 @@ export const POST = async (request) => {
             resendEmailVerificationLink = `http://${hostname}:${configuration.port}/api/v1/auth/resend-verification/${newUser._id}`;
         }
 
-        const emailData = {
-            emailVerificationLink,
-            resendEmailVerificationLink,
-        };
-        const {
-            pageTitle,
-            preheaderText,
-            heroSection,
-            mainSection,
-            footerContent,
-        } = prepareEmailContent(subject, emailData);
-
-        console.debug('Connecting to email service');
-        await EmailService.connect();
-
         console.debug('Sending verification email');
-        await EmailService.sendEmail(
-            userData.email,
-            subject,
-            prepareEmail(
-                pageTitle,
-                preheaderText,
-                heroSection,
-                mainSection,
-                footerContent
-            )
+        await axios.post(
+            `${configuration.service.sendEmail}/api/v1/send-email`,
+            {
+                email: userData.email.toLowerCase(),
+                subject: 'Confirm Your Email Address',
+                userName: newUser?.name?.first,
+                emailVerificationLink,
+                resendEmailVerificationLink,
+                deviceType: 'IOS',
+                loginTime: new Date().toISOString(),
+                ipAddress: '1:1:1:1',
+            }
         );
 
         return await sendResponse(

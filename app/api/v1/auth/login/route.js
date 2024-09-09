@@ -1,14 +1,13 @@
 import { model, models } from 'mongoose';
+import axios from 'axios';
 
 import usersSchema from '@/app/api/v1/(users)/users.schema';
 import databaseService from '@/service/database.service.js';
 import httpStatus from '@/constants/httpStatus.constants.js';
-import EmailService from '@/service/email.service.js';
+import configuration from '@/configuration/configuration';
 
 import getModelName from '@/utilities/getModelName';
 import sendResponse from '@/utilities/sendResponse.js';
-import prepareEmailContent from '@/shared/prepareEmailContent.js';
-import prepareEmail from '@/shared/prepareEmail.js';
 import comparePassword from '@/utilities/comparePassword.js';
 import createAuthenticationToken from '@/utilities/createAuthenticationToken.js';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
@@ -147,23 +146,21 @@ export const POST = async (request) => {
             }
         );
 
-        const emailContent = prepareEmailContent('Login Successfully', {
-            userName: user.name.first,
-        });
-
         const primaryEmailObj = user.emails.find(
             (email) => email.isPrimaryEmail && email.isEmailVerified
         );
         const primaryEmail = primaryEmailObj.email;
 
-        console.debug('Connecting to email service');
-        await EmailService.connect();
-
-        console.debug(`Sending login success email to: ${primaryEmail}`);
-        await EmailService.sendEmail(
-            primaryEmail,
-            'Login Successfully',
-            prepareEmail(emailContent)
+        await axios.post(
+            `${configuration.service.sendEmail}/api/v1/send-email`,
+            {
+                email: primaryEmail,
+                subject: 'Login Successfully',
+                userName: user?.name?.first,
+                deviceType: 'IOS',
+                loginTime: new Date().toISOString(),
+                ipAddress: '1:1:1:1',
+            }
         );
 
         return await sendResponse(
