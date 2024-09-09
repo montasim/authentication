@@ -11,6 +11,39 @@ import constants from '@/constants/constants.js';
 import usersConstants from '@/app/api/v1/(users)/users.constants.js';
 
 import getPatternByName from '@/utilities/getPatternByName';
+import serverApiCall from '@/utilities/axios.server';
+import getDataByCriteria from '@/utilities/getDataByCriteria';
+
+const getConfigurationDataFromAPI = async () => {
+    const [userPatternsApiResponse, userPatternsDefaultResponse] =
+        await Promise.all([
+            serverApiCall.getData('/api/v1/dashboard/users/patterns'),
+            getDataByCriteria('usersPatterns.json'),
+        ]);
+
+    let userPatternsRegex;
+    // let userPatternsRegex = new RegExp(userPatternsDefaultResponse);
+    if (await userPatternsApiResponse?.data[0]?.value) {
+        userPatternsRegex = new RegExp(userPatternsApiResponse?.data[0]?.value);
+    }
+
+    return {
+        userPatternsRegex,
+    };
+};
+
+const loadUserConfigurationData = async () => {
+    const configurationData = await getConfigurationDataFromAPI();
+
+    console.log(configurationData);
+
+    return configurationData;
+};
+
+// Call this function at the start of your application.
+loadUserConfigurationData().then(() => {
+    console.debug('User Configuration data loaded successfully');
+});
 
 /**
  * @schema usernameSchema
@@ -27,7 +60,7 @@ const usernameSchema = {
         'The username you chose is already in use. Please try a different one.',
     ],
     match: [
-        usersConstants.pattern.USERNAME,
+        new RegExp(loadUserConfigurationData.userPatternsRegex),
         'Please enter a valid email address for your username.',
     ],
     minlength: [
@@ -50,7 +83,7 @@ const dateOfBirthSchema = {
     trim: true,
     required: [true, 'Your date of birth is required.'],
     match: [
-        usersConstants.pattern.DATE_OF_BIRTH,
+        new RegExp(loadUserConfigurationData.dateOfBirthPatternRegex),
         'Date of birth must be in the format DD-MM-YYYY and a valid date.',
     ],
     description:
