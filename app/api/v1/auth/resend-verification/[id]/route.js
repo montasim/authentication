@@ -13,6 +13,7 @@ import generateVerificationToken from '@/utilities/generateVerificationToken.js'
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
 
 /**
  * Handles the process of resending an email verification link to the user.
@@ -136,15 +137,8 @@ export const POST = async (request, context) => {
         console.debug('Constructing email verification link');
         const hostname = request.nextUrl.hostname;
 
-        const [environmentNameProduction] = await Promise.all([
-            serverApiCall.getData(
-                '/api/v1/dashboard/environments?name=PRODUCTION'
-            ),
-        ]);
-
         const emailVerificationLink =
-            configuration.env ===
-            (await environmentNameProduction?.data[0]?.value)
+            configuration.env === getEnvironmentByName('PRODUCTION')
                 ? `https://${hostname}/api/v1/auth/resend-verification/${plainToken}`
                 : `http://${hostname}:3000/api/v1/auth/resend-verification/${plainToken}`;
         console.debug(

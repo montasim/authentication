@@ -16,6 +16,8 @@ import createHashedPassword from '@/utilities/createHashedPassword.js';
 import generateVerificationToken from '@/utilities/generateVerificationToken.js';
 import prepareEmailContent from '@/shared/prepareEmailContent.js';
 import prepareEmail from '@/shared/prepareEmail.js';
+import getEnvironmentByName from '@/utilities/getEnvironmentByName';
+import getDefaultValueByName from '@/utilities/getDefaultValueByName';
 import sendErrorResponse from '@/utilities/sendErrorResponse';
 
 /**
@@ -157,23 +159,13 @@ export const POST = async (request) => {
             emailVerifyTokenExpires,
         };
 
-        const [defaultGenderImage, environmentNameProduction] =
-            await Promise.all([
-                serverApiCall.getData(
-                    '/api/v1/dashboard/default/gender-images?name=OTHER'
-                ),
-                serverApiCall.getData(
-                    '/api/v1/dashboard/environments?name=PRODUCTION'
-                ),
-            ]);
-
         console.debug('Saving new user data');
         const newUser = await UsersModel.create({
             name: {
                 first: userData.name,
             },
             image: {
-                downloadLink: await defaultGenderImage.data[0].value,
+                downloadLink: getDefaultValueByName('MALE'),
             },
             emails: [emailObject],
             dateOfBirth,
@@ -189,10 +181,7 @@ export const POST = async (request) => {
         // Access the host information from the request
         const hostname = request.nextUrl.hostname;
 
-        if (
-            configuration.env ===
-            (await environmentNameProduction.data[0].value)
-        ) {
+        if (configuration.env === getEnvironmentByName('PRODUCTION')) {
             emailVerificationLink = `https://${hostname}/auth/verify/${plainToken}?t=s`;
             resendEmailVerificationLink = `https://${hostname}/auth/verify/${newUser._id}`;
         } else {
